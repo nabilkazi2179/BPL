@@ -1,0 +1,23 @@
+{
+  "name": "bpl-season2-cricket-app",
+  "version": "1.0.0",
+  "description": "Borli Premier League Season 2 (presented by Sidra and Devansh Sports) — player registration and live auction app",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cloudinary": "^2.4.0",
+    "exceljs": "^4.4.0",
+    "express": "^5.2.1",
+    "multer": "^2.2.0",
+    "pdfkit": "^0.15.0",
+    "pg": "^8.11.5",
+    "qrcode": "^1.5.3",
+    "sharp": "^0.34.5"
+  }
+}

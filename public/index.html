@@ -1,0 +1,2740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Borli Premier League Season 2 — Player Registration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#0B0B0D; --primary-deep:#000000; --pitch:#0B0B0D; --pitch-deep:#000000;
+    --accent:#D4AF37; --accent-2:#B8860B; --accent-3:#F3D576;
+    --grad-header: linear-gradient(115deg,#000 0%,#14110a 55%,#2b2208 100%);
+    --paper:#F8F4E8; --paper-2:#EDE4C8; --ink:#17140B; --ink-soft:#6B6347;
+    --leather:#C9971C; --leather-deep:#9C7410; --gold:#D4AF37; --gold-soft:#F3E3A0;
+    --wk:#0EA5E9; --allr:#F59E0B; --ok:#00A878; --err:#E11D48; --border:#E3D6A8;
+    --radius:12px; --shadow:0 8px 24px rgba(120,90,10,0.14);
+    --gold-grad:linear-gradient(135deg,#F7E08A 0%,#D4AF37 45%,#9C7410 100%);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+  .display{font-family:'Sora',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  header.site{background:var(--grad-header);color:#fff;padding:22px 20px 0;position:relative;border-bottom:3px solid var(--accent-3);}
+  .header-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding-bottom:18px;}
+  .crest{display:flex;align-items:center;gap:12px;}
+  .crest-mark{width:46px;height:46px;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:700;font-size:15px;color:#fff;flex-shrink:0;background:rgba(255,255,255,0.12);}
+  .crest-text .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-3);margin:0 0 2px;font-weight:700;}
+  .crest-text h1{font-size:20px;margin:0;font-weight:700;letter-spacing:.01em;font-family:'Sora',sans-serif;color:#fff;}
+  nav.tabs{display:flex;gap:2px;background:rgba(255,255,255,0.14);padding:4px;border-radius:999px;}
+  nav.tabs button{border:none;background:transparent;color:#fff;padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;cursor:pointer;transition:background .2s, color .2s;}
+  nav.tabs button.active{background:#fff;color:var(--primary-deep);font-weight:700;}
+  .tagline-strip{max-width:1120px;margin:0 auto;padding:0 0 16px;color:rgba(255,255,255,0.85);font-size:14px;border-top:1px solid rgba(255,255,255,0.2);padding-top:12px;}
+  .tagline-strip strong{color:var(--accent-3);}
+  main{max-width:1120px;margin:0 auto;padding:32px 20px 80px;}
+  .reg-grid{display:grid;grid-template-columns: 1.35fr 1fr;gap:28px;align-items:start;}
+  @media (max-width: 860px){ .reg-grid{grid-template-columns:1fr;} .card-preview-wrap{order:-1;} }
+  .panel{background:#fff;border:1px solid var(--paper-2);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px 26px 30px;}
+  .panel h2{font-family:'Sora',sans-serif;font-size:20px;margin:0 0 4px;}
+  .panel .sub{color:var(--ink-soft);font-size:13px;margin:0 0 22px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;}
+  .field input[type=text], .field input[type=tel]{width:100%;padding:11px 13px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:15px;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);transition:border-color .15s;}
+  .field input:focus{outline:none;border-color:var(--leather);}
+  .field .hint{font-size:11px;color:var(--ink-soft);margin-top:5px;}
+  .field .err-msg{font-size:12px;color:var(--err);margin-top:5px;display:none;}
+  .field.invalid input, .field.invalid .role-grid, .field.invalid .upload-box{border-color:var(--err) !important;}
+  .field.invalid .err-msg{display:block;}
+  .role-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .role-card{border:1.5px solid #DDD8EF;border-radius:8px;padding:14px 12px;text-align:center;cursor:pointer;background:var(--paper);transition:all .15s;user-select:none;}
+  .role-card:hover{border-color:var(--gold);}
+  .role-card .ic{font-size:22px;display:block;margin-bottom:6px;}
+  .role-card .lbl{font-size:13px;font-weight:600;}
+  .role-card.selected{border-color:var(--leather);background:#FFE9E2;box-shadow:inset 0 0 0 1px var(--leather);}
+  .role-card.selected .lbl{color:var(--leather-deep);}
+  .upload-box{border:1.5px dashed #C7BEEA;border-radius:8px;padding:18px;text-align:center;background:var(--paper);cursor:pointer;position:relative;}
+  .upload-box input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .photo-preview{width:88px;height:88px;border-radius:50%;border:2px solid var(--gold);object-fit:cover;margin:0 auto 10px;display:block;background:#fff;}
+  .upload-box .up-txt{font-size:13px;color:var(--ink-soft);}
+  .upload-box .up-txt b{color:var(--ink);}
+  .proof-preview{max-width:100%;max-height:130px;border-radius:6px;border:1px solid var(--paper-2);display:block;margin:0 auto 10px;}
+  .ledger{border:1px solid var(--paper-2);border-radius:8px;background:var(--paper);padding:18px;display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:start;}
+  @media (max-width:520px){ .ledger{grid-template-columns:1fr;} }
+  .qr-box{background:#fff;border:1px solid var(--paper-2);border-radius:6px;padding:8px;text-align:center;}
+  .qr-box img{width:100%;display:block;border-radius:4px;}
+  .qr-box .qr-cap{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px;}
+  .qr-empty{font-size:12px;color:var(--ink-soft);padding:20px 6px;}
+  .submit-btn{width:100%;background:var(--leather);color:#fff;border:none;padding:14px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:.02em;cursor:pointer;margin-top:6px;transition:background .15s;}
+  .submit-btn:hover{background:var(--leather-deep);}
+  .submit-btn:disabled{background:#C9C3E0;cursor:not-allowed;}
+  .success-box{text-align:center;padding:40px 20px;}
+  .success-box .stamp{width:74px;height:74px;border-radius:50%;border:2.5px solid var(--ok);color:var(--ok);display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 18px;}
+  .success-box h2{margin-bottom:6px;}
+  .success-box .regno{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--paper);border:1px dashed var(--gold);display:inline-block;padding:6px 14px;border-radius:6px;margin-top:14px;}
+  .card-preview-wrap{position:sticky; top:20px;}
+  .auction-card{background:linear-gradient(160deg,#fff 0%, var(--paper) 100%);border:1px solid var(--paper-2);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;position:relative;}
+  .auction-card .ribbon{position:absolute;top:14px;right:-32px;background:var(--gold);color:var(--pitch-deep);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 40px;transform:rotate(38deg);font-weight:700;}
+  .live-card-frame{position:relative;}
+  .live-card-empty{background:linear-gradient(160deg,#14110a 0%, #000000 100%);border:3px solid #D9B143;border-radius:16px;aspect-ratio:1200/720;display:flex;align-items:center;justify-content:center;text-align:center;color:rgba(243,238,221,0.6);font-size:13px;padding:24px;box-shadow:var(--shadow);}
+  .ac-top{background:var(--pitch);padding:16px 18px 40px;color:var(--paper);position:relative;}
+  .ac-regno{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--gold-soft);}
+  .ac-photo{width:96px;height:96px;border-radius:50%;border:3px solid var(--gold);object-fit:cover;background:var(--primary-deep);position:absolute;bottom:-38px;left:18px;display:flex;align-items:center;justify-content:center;color:var(--gold-soft);font-size:30px;}
+  .ac-body{padding:46px 18px 20px;}
+  .ac-name{font-family:'Sora',sans-serif;font-size:21px;font-weight:600;margin:0 0 4px;}
+  .ac-loc{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px;}
+  .ac-role-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;color:#fff;margin-bottom:16px;}
+  .ac-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;border-top:1px dashed var(--paper-2);padding-top:14px;}
+  .ac-stats div{font-size:11px;color:var(--ink-soft);}
+  .ac-stats div b{display:block;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink);margin-top:2px;}
+  .ac-note{font-size:11px;text-align:center;color:var(--ink-soft);padding:12px 18px 0;margin-top:4px;}
+  .admin-lock{max-width:380px;margin:60px auto;text-align:center;}
+  .admin-lock .vault{width:60px;height:60px;border-radius:50%;border:2px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 16px;}
+  .admin-lock input{width:100%;padding:12px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:15px;text-align:center;margin:16px 0 10px;font-family:'JetBrains Mono',monospace;}
+  .admin-lock button{background:var(--pitch);color:#fff;border:none;padding:11px 26px;border-radius:8px;cursor:pointer;font-weight:600;}
+  .admin-lock .lock-err{color:var(--err);font-size:12px;margin-top:8px;display:none;}
+  .admin-bar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:20px;}
+  .stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+  .stat-card{flex:1;min-width:130px;background:var(--primary);background-image:linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%);color:#fff;border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);}
+  .stat-card .snum{display:block;font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--accent-3);line-height:1.1;}
+  .stat-card .slbl{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.9;margin-top:2px;display:block;}
+  .stat-card.warn{background-image:linear-gradient(135deg, var(--leather) 0%, var(--leather-deep) 100%);}
+  .stat-card.warn .snum{color:#fff;}
+  .stat-card.ok2{background-image:linear-gradient(135deg, var(--ok) 0%, #007a53 100%);}
+  .stat-card.ok2 .snum{color:#fff;}
+  .scoreboard-total{background:var(--pitch);color:var(--paper);padding:10px 20px;border-radius:8px;font-family:'JetBrains Mono',monospace;display:flex;align-items:baseline;gap:10px;}
+  .scoreboard-total .num{font-size:24px;font-weight:700;color:var(--gold);}
+  .scoreboard-total .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;}
+  .admin-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .admin-controls input[type=text]{padding:9px 12px;border:1.5px solid #DDD8EF;border-radius:7px;font-size:13px;min-width:180px;}
+  .chip{padding:7px 14px;border-radius:999px;border:1.5px solid #DDD8EF;background:#fff;font-size:12px;cursor:pointer;font-weight:600;color:var(--ink-soft);}
+  .chip.active{background:var(--pitch);color:var(--paper);border-color:var(--pitch);}
+  .btn-outline{padding:9px 16px;border-radius:7px;border:1.5px solid var(--pitch);background:#fff;color:var(--pitch);font-size:12.5px;font-weight:700;cursor:pointer;}
+  .btn-outline:hover{background:var(--pitch);color:#fff;}
+  table.roster{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:var(--shadow);}
+  table.roster th{background:var(--pitch);color:var(--gold-soft);text-align:left;padding:12px 14px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;white-space:nowrap;}
+  table.roster td{padding:11px 14px;font-size:13.5px;border-bottom:1px solid var(--paper-2);vertical-align:middle;}
+  table.roster tr:nth-child(even) td{background:var(--paper);}
+  table.roster tr:hover td{background:var(--gold-soft);}
+  .roster-photo{width:40px;height:40px;border-radius:50%;object-fit:cover;border:1.5px solid var(--gold);}
+  .role-pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;padding:3px 9px;border-radius:999px;color:#fff;}
+  .proof-link{color:var(--leather);font-size:12px;text-decoration:underline;cursor:pointer;background:none;border:none;padding:0;}
+  .empty-state{text-align:center;padding:60px 20px;color:var(--ink-soft);}
+  .qr-admin-box{background:#fff;border:1px solid var(--paper-2);border-radius:10px;padding:18px;margin-bottom:22px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+  .qr-admin-box img{width:70px;height:70px;object-fit:contain;border:1px solid var(--paper-2);border-radius:6px;}
+  .qr-admin-box .txt{font-size:12.5px;color:var(--ink-soft);flex:1;min-width:200px;}
+  .qr-admin-box label.up{background:var(--pitch);color:#fff;padding:9px 16px;border-radius:7px;font-size:12.5px;cursor:pointer;font-weight:600;}
+  .qr-admin-box input[type=file]{display:none;}
+  .modal-bg{position:fixed;inset:0;background:rgba(14,36,23,0.55);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
+  .modal-bg.show{display:flex;}
+  .modal-bg img{max-width:90vw;max-height:85vh;border-radius:8px;}
+  footer.site{text-align:center;padding:24px;font-size:11.5px;color:var(--ink-soft);}
+  .loading-row{padding:30px;text-align:center;color:var(--ink-soft);font-size:13px;}
+
+  /* ===== GOLD & BLACK THEME ===== */
+  body{background:radial-gradient(1100px 420px at 50% -80px, rgba(212,175,55,.20), transparent 70%), var(--paper);}
+  header.site{background:#000;border-bottom:0;padding-top:18px;position:relative;}
+  header.site::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--gold-grad);}
+  .crest{gap:16px;}
+  .crest{flex:1;min-width:0;}
+  .kt-badge small{font:700 8.5px/1 'JetBrains Mono',monospace;letter-spacing:.2em;color:#7a6a2a;margin-bottom:4px;}
+  .kt-badge{margin-left:auto;background:#fff;border-radius:12px;padding:6px 14px 7px;display:flex;flex-direction:column;align-items:flex-start;flex-shrink:0;box-shadow:0 0 0 2px #D4AF37,0 0 22px rgba(212,175,55,.35);}
+  .kt-badge img{height:38px;width:auto;display:block;}
+  @media(max-width:700px){.crest{flex-wrap:wrap;} .kt-badge{margin-left:0;padding:5px 10px;} .kt-badge img{height:28px;}}
+  .crest-text .eyebrow{color:#D4AF37;font-size:10.5px;letter-spacing:.2em;}
+  .crest-text h1{font-size:26px;line-height:1.1;letter-spacing:.02em;color:#fff;}
+  .crest-text h1 span{display:block;font-size:15px;letter-spacing:.14em;margin-top:5px;background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  nav.tabs{background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.35);}
+  nav.tabs button{color:#F3E3A0;}
+  nav.tabs button.active{background:var(--gold-grad);color:#000;}
+  .tagline-strip{border-top:1px solid rgba(212,175,55,.3);color:rgba(255,255,255,.82);}
+  .tagline-strip strong{color:#F3D576;}
+  .event-strip{display:none;max-width:1120px;margin:0 auto;padding:0 0 16px;align-items:center;gap:18px;flex-wrap:wrap;color:#F3E3A0;}
+  .event-strip.show{display:flex;}
+  .cd{display:flex;gap:8px;}
+  .cd div{background:linear-gradient(180deg,#1b1608,#000);border:1px solid rgba(212,175,55,.55);border-radius:8px;min-width:54px;padding:6px 8px;text-align:center;}
+  .cd b{display:block;font-family:'JetBrains Mono',monospace;font-size:20px;color:#F3D576;line-height:1.1;}
+  .cd small{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#bfae74;}
+  .ev-meta{font-size:13px;line-height:1.5;}
+  .ev-meta b{color:#F3D576;letter-spacing:.06em;text-transform:uppercase;font-size:11px;display:block;}
+  .ticker{background:#000;border-bottom:1px solid #3a2f0c;overflow:hidden;white-space:nowrap;padding:9px 0;}
+  .ticker-track{display:inline-flex;gap:46px;align-items:center;animation:tick 32s linear infinite;padding-left:46px;}
+  .ticker:hover .ticker-track{animation-play-state:paused;}
+  .ticker-item{display:inline-flex;align-items:center;gap:10px;color:#F3D576;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;}
+  .ticker-item img{height:24px;width:auto;border-radius:6px;background:#fff;padding:3px 8px;box-shadow:0 0 0 1px #D4AF37;}
+  .ticker-item i{color:#D4AF37;font-style:normal;}
+  @keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .panel{border:1px solid var(--border);border-top:3px solid #D4AF37;}
+  .panel h2,.display{letter-spacing:.01em;}
+  .field input[type=text],.field input[type=tel],.admin-lock input,.admin-controls input[type=text],select,input[type=number]{background:#FFFDF6;border-color:#E3D6A8 !important;color:var(--ink);}
+  .field input:focus,select:focus,input[type=number]:focus{border-color:#C9971C !important;box-shadow:0 0 0 3px rgba(212,175,55,.22);outline:none;}
+  .role-card{border-color:#E3D6A8;background:#FFFDF6;}
+  .role-card.selected{background:#FBF1CF;border-color:#C9971C;box-shadow:inset 0 0 0 1px #C9971C;}
+  .role-card.selected .lbl{color:#7a5a08;}
+  .upload-box{border-color:#D4AF37;background:#FFFDF6;}
+  .submit-btn,.admin-lock button,.qr-admin-box label.up{background:var(--gold-grad);color:#000;font-weight:800;box-shadow:0 4px 14px rgba(156,116,16,.3);}
+  .submit-btn:hover,.admin-lock button:hover{filter:brightness(1.07);background:var(--gold-grad);}
+  .submit-btn:disabled{background:#D9D2B8;color:#7b7458;box-shadow:none;}
+  .btn-outline{background:#fff;border-color:#0B0B0D;color:#0B0B0D;}
+  .btn-outline:hover{background:#0B0B0D;color:#F3D576;}
+  .chip{border-color:#E3D6A8;background:#FFFDF6;}
+  .chip.active{background:#0B0B0D;color:#F3D576;border-color:#D4AF37;}
+  .stat-card{background:linear-gradient(135deg,#000 0%,#1c1608 100%);border:1px solid rgba(212,175,55,.5);}
+  .stat-card .snum{color:#F3D576;}
+  .stat-card.warn{background-image:linear-gradient(135deg,#7a1a14,#3d0b08);} .stat-card.warn .snum{color:#fff;}
+  .scoreboard-total{background:#000;border:1px solid rgba(212,175,55,.5);}
+  table.roster th{background:#000;color:#F3D576;border-bottom:2px solid #D4AF37;}
+  table.roster tr:hover td{background:#FBF1CF;}
+  .roster-photo,.photo-preview{border-color:#D4AF37;}
+  .proof-link{color:#9C7410;font-weight:600;}
+  .ac-top{background:#000;} .auction-card{border-top:3px solid #D4AF37;}
+  .modal-bg{background:rgba(0,0,0,.72);}
+  footer.site{background:#000;color:#bfae74;padding:26px 20px;border-top:3px solid #D4AF37;}
+  footer.site .f-brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px;color:#F3D576;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;}
+  footer.site .f-brand img{height:34px;width:auto;border-radius:8px;background:#fff;padding:5px 10px;box-shadow:0 0 0 1.5px #D4AF37;}
+  /* ---- team stats ---- */
+  .tstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:18px 0 8px;}
+  .tstat{background:linear-gradient(135deg,#000,#1c1608);border:1px solid rgba(212,175,55,.5);border-radius:12px;padding:14px 16px;color:#fff;}
+  .tstat small{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#bfae74;display:block;}
+  .tstat b{display:block;font-family:'Sora',sans-serif;font-size:22px;color:#F3D576;margin-top:4px;}
+  .tstat span{font-size:12px;color:#e8dcae;}
+  .tboard{background:#fff;border:1px solid var(--border);border-top:3px solid #D4AF37;border-radius:12px;padding:16px 18px;margin:12px 0 22px;box-shadow:var(--shadow);}
+  .tboard h3{margin:0 0 10px;font-family:'Sora',sans-serif;font-size:15px;}
+  .tb-row{display:grid;grid-template-columns:150px 1fr 96px;gap:10px;align-items:center;margin:7px 0;font-size:13px;}
+  .tb-bar{height:10px;border-radius:99px;background:#F1EAD0;overflow:hidden;}
+  .tb-bar i{display:block;height:100%;background:var(--gold-grad);border-radius:99px;}
+  @media(max-width:560px){.tb-row{grid-template-columns:100px 1fr 80px;} .crest-text h1{font-size:20px;} .crest-logo{width:60px;height:60px;}}
+  /* ---- projector / live stage ---- */
+  #stage{position:fixed;inset:0;z-index:2000;background:radial-gradient(900px 500px at 50% 0%,#2b2208 0%,#000 70%);color:#fff;display:none;flex-direction:column;font-family:'Inter',sans-serif;}
+  #stage.show{display:flex;}
+  .st-top{display:flex;align-items:center;gap:16px;padding:12px 24px;border-bottom:2px solid #D4AF37;background:rgba(0,0,0,.6);}
+  .st-top img{height:40px;width:auto;border-radius:8px;background:#fff;padding:5px 10px;box-shadow:0 0 0 2px #D4AF37;}
+  .st-top .t1{font-family:'Sora',sans-serif;font-weight:700;font-size:20px;letter-spacing:.04em;}
+  .st-top .t2{font-size:11px;letter-spacing:.2em;color:#D4AF37;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+  .st-top .live{margin-left:auto;display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;color:#ff5a5a;}
+  .st-top .live::before{content:"";width:10px;height:10px;border-radius:50%;background:#ff3b3b;animation:pulse 1.2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+  .st-main{flex:1;display:grid;grid-template-columns:1fr 300px;gap:0;min-height:0;}
+  .st-center{display:flex;align-items:center;justify-content:center;gap:5vw;padding:2vh 3vw;flex-wrap:wrap;}
+  .st-photo{width:min(38vh,34vw);height:min(38vh,34vw);border-radius:50%;object-fit:cover;border:6px solid #D4AF37;box-shadow:0 0 60px rgba(212,175,55,.45);background:#111;}
+  .st-info{max-width:46vw;}
+  .st-info .reg{font-family:'JetBrains Mono',monospace;color:#D4AF37;letter-spacing:.2em;font-size:clamp(12px,1.6vh,18px);}
+  .st-info h2{font-family:'Sora',sans-serif;font-size:clamp(30px,7vh,76px);line-height:1.05;margin:8px 0 14px;background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .st-info .pill{display:inline-block;padding:7px 18px;border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:clamp(12px,2vh,20px);letter-spacing:.1em;text-transform:uppercase;color:#000;background:#F3D576;margin:0 8px 8px 0;}
+  .st-info p{font-size:clamp(14px,2.4vh,24px);color:#e8dcae;margin:6px 0;}
+  .st-empty{font-family:'Sora',sans-serif;font-size:clamp(22px,4vh,44px);color:#D4AF37;text-align:center;}
+  .st-side{border-left:1px solid #3a2f0c;background:rgba(0,0,0,.45);padding:14px 16px;overflow:auto;}
+  .st-side h4{margin:0 0 10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:#D4AF37;text-transform:uppercase;}
+  .st-team{margin:0 0 12px;font-size:13px;} .st-team .n{display:flex;justify-content:space-between;gap:8px;} .st-team .n b{color:#F3D576;font-family:'JetBrains Mono',monospace;}
+  .st-team .bar{height:6px;border-radius:99px;background:#2a2410;margin-top:4px;overflow:hidden;} .st-team .bar i{display:block;height:100%;background:var(--gold-grad);}
+  .st-ctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 24px;border-top:2px solid #D4AF37;background:rgba(0,0,0,.75);}
+  .st-ctl select,.st-ctl input{padding:11px 12px;border-radius:8px;border:1.5px solid #D4AF37 !important;background:#14110a;color:#fff;font-size:16px;}
+  .st-ctl input{width:150px;} .st-ctl select{min-width:200px;}
+  .st-btn{padding:12px 22px;border-radius:8px;border:none;cursor:pointer;font-weight:800;font-size:15px;letter-spacing:.04em;background:#2a2410;color:#F3D576;}
+  .st-btn.gold{background:var(--gold-grad);color:#000;} .st-btn.red{background:#7a1a14;color:#fff;} .st-btn.x{margin-left:auto;}
+  #soldOverlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(0,0,0,.88);text-align:center;z-index:5;}
+  #soldOverlay.show{display:flex;}
+  #soldOverlay .big{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(70px,20vh,220px);line-height:1;background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;animation:pop .6s cubic-bezier(.2,1.6,.4,1);}
+  #soldOverlay .who{font-family:'Sora',sans-serif;font-size:clamp(24px,5vh,56px);margin-top:10px;}
+  #soldOverlay .to{font-size:clamp(16px,3vh,32px);color:#F3D576;margin-top:8px;letter-spacing:.06em;}
+  #soldOverlay .amt{font-family:'JetBrains Mono',monospace;font-size:clamp(34px,9vh,100px);color:#fff;margin-top:10px;animation:pop .8s .15s both cubic-bezier(.2,1.6,.4,1);}
+  #soldOverlay img.tl{width:clamp(70px,14vh,150px);height:clamp(70px,14vh,150px);border-radius:50%;object-fit:cover;border:4px solid #D4AF37;margin-top:14px;}
+  @keyframes pop{from{transform:scale(.2);opacity:0;}to{transform:scale(1);opacity:1;}}
+  #confetti{position:absolute;inset:0;pointer-events:none;z-index:6;}
+  @media(max-width:900px){.st-main{grid-template-columns:1fr;} .st-side{display:none;} .st-info{max-width:92vw;text-align:center;}}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="header-inner">
+    <div class="crest">
+      <div class="crest-text">
+        <p class="eyebrow" id="brandEyebrow">Sidra and Devansh Sports present</p>
+        <h1 class="display"><b id="brandL1" style="font-weight:inherit;">BORLI PREMIER LEAGUE</b><span id="brandL2">SEASON 2 · JANUARY 2027</span></h1>
+      </div>
+      <div class="kt-badge"><small>MADE BY</small><img src="/konkantech-logo.jpg" alt="Made by KonkanTech Institute of Technology &amp; Management"></div>
+    </div>
+    <nav class="tabs">
+      <button class="active" data-view="register" onclick="switchView('register')">Register</button>
+      <button data-view="teams" onclick="switchView('teams')">Teams</button>
+      <button data-view="admin" onclick="switchView('admin')">Admin</button>
+      <button data-view="auction" onclick="switchView('auction')">Auction</button>
+      <button data-view="owner" onclick="switchView('owner')">Owner Login</button>
+    </nav>
+  </div>
+  <div class="event-strip" id="eventStrip"><div class="cd" id="cdBox"></div><div class="ev-meta" id="evMeta"></div></div>
+  <div class="tagline-strip">Only <strong>registered members</strong> are eligible to enter the player auction. Complete enrolment below to secure your spot.</div>
+</header>
+<div class="ticker"><div class="ticker-track" id="tickerTrack"></div></div>
+
+<main>
+  <section id="view-register">
+    <div style="text-align:center;margin-bottom:14px;">
+      <button class="proof-link" onclick="showIdLookup()">Already registered? Get your ID card →</button>
+    </div>
+    <div id="id-lookup-wrap" class="panel" style="display:none;max-width:520px;margin:0 auto;">
+      <h2 class="display" style="margin-bottom:4px;">Find Your ID Card</h2>
+      <p class="sub">Enter the mobile number you used to register.</p>
+      <input type="tel" id="lookupMobile" placeholder="10-digit mobile number" maxlength="10" style="width:100%;padding:11px 13px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:15px;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);">
+      <div class="err-msg" id="lookupErr" style="color:var(--err);font-size:12px;margin-top:6px;display:none;"></div>
+      <div style="margin-top:14px;display:flex;gap:10px;">
+        <button class="submit-btn" style="margin-top:0;" onclick="findMyIdCard()">Find My ID Card</button>
+        <button class="btn-outline" onclick="hideIdLookup()">Cancel</button>
+      </div>
+      <canvas id="idLookupCanvas" width="1200" height="720" style="display:none;"></canvas>
+      <div id="idLookupArea" style="margin-top:22px;display:none;">
+        <img id="idLookupPreview" style="width:100%;border-radius:12px;box-shadow:var(--shadow);">
+        <div style="margin-top:16px;">
+          <a id="idLookupDownload" class="btn-outline" style="text-decoration:none;display:inline-block;" download="id-card.png">Download ID Card</a>
+        </div>
+        <div id="idLookupNote" style="font-size:11.5px;color:var(--ink-soft);margin-top:8px;display:none;"></div>
+      </div>
+    </div>
+    <div id="reg-full-wrap" class="panel success-box" style="display:none;max-width:480px;margin:0 auto;">
+      <div class="stamp" style="border-color:var(--leather);color:var(--leather);">✕</div>
+      <h2 class="display">Registration is Full</h2>
+      <p class="sub" id="regFullMsg" style="margin-bottom:0;">We've reached our registration limit for this season.</p>
+    </div>
+    <div id="regSlots" style="text-align:center;margin:0 auto 12px;font-size:13.5px;color:var(--ink-soft,#6b6450);"></div>
+    <div id="reg-form-wrap">
+      <div class="reg-grid">
+        <div class="panel">
+          <h2>Player Enrolment Form</h2>
+          <p class="sub">Fill in your details exactly as they should appear on the auction sheet.</p>
+          <form id="regForm" novalidate>
+            <div class="field" id="f-name">
+              <label for="fullName">Full Name</label>
+              <input type="text" id="fullName" placeholder="e.g. Nabil Kazi" autocomplete="name">
+              <div class="err-msg">Please enter your full name.</div>
+            </div>
+            <div class="field" id="f-loc">
+              <label for="location">Location</label>
+              <input type="text" id="location" value="Borli" readonly style="background:#F6F1DD;font-weight:600;cursor:not-allowed;" title="This league is only for Borli players">
+              <div style="font-size:11.5px;color:var(--ink-soft,#6b6450);margin-top:4px;">This league is only for Borli players.</div>
+              <div class="err-msg">Please enter your location.</div>
+            </div>
+            <div class="field" id="f-mobile">
+              <label for="mobile">Mobile Number</label>
+              <input type="tel" id="mobile" maxlength="10" placeholder="10-digit mobile number" autocomplete="tel">
+              <div class="hint">Used for auction-day contact. Enter a valid 10-digit number.</div>
+              <div class="err-msg">Please enter a valid 10-digit mobile number.</div>
+            </div>
+            <div class="field" id="f-role">
+              <label>Playing Role</label>
+              <div class="role-grid" id="roleGrid">
+                <div class="role-card" data-role="Batsman"><span class="ic">🏏</span><span class="lbl">Batsman</span></div>
+                <div class="role-card" data-role="Bowler"><span class="ic">🎯</span><span class="lbl">Bowler</span></div>
+                <div class="role-card" data-role="All-Rounder"><span class="ic">⚡</span><span class="lbl">All-Rounder</span></div>
+                <div class="role-card" data-role="Wicket Keeper"><span class="ic">🧤</span><span class="lbl">Wicket Keeper</span></div>
+              </div>
+              <div class="err-msg">Please select your playing role.</div>
+            </div>
+            <div class="field" id="f-age">
+              <label>Age Category</label>
+              <div class="role-grid" id="ageGrid">
+                <div class="role-card" data-age="48 Plus"><span class="ic">🎂</span><span class="lbl">48 Plus</span></div>
+                <div class="role-card selected" data-age="Under 48"><span class="ic">🎂</span><span class="lbl">Under 48</span></div>
+              </div>
+              <div class="err-msg">Please select your age category.</div>
+            </div>
+            <div class="field" id="f-photo">
+              <label>Passport-Size Photo</label>
+              <div class="upload-box" id="photoBox">
+                <img id="photoPreview" class="photo-preview" style="display:none;">
+                <div class="up-txt" id="photoTxt"><b>Tap to upload</b><br>JPG or PNG, up to 2MB</div>
+                <input type="file" id="photoInput" accept="image/jpeg,image/png">
+              </div>
+              <div class="err-msg">Please upload a passport-size photo.</div>
+            </div>
+            <div class="field" id="f-payment">
+              <label>Membership Payment</label>
+              <div class="ledger">
+                <div class="qr-box" id="qrBox"><div class="qr-empty">QR code<br>not set up yet</div></div>
+                <div>
+                  <div class="upload-box" id="proofBox" style="margin-bottom:12px;">
+                    <img id="proofPreview" class="proof-preview" style="display:none;">
+                    <div class="up-txt" id="proofTxt"><b>Scan QR &amp; pay, then upload your payment screenshot here</b></div>
+                    <input type="file" id="proofInput" accept="image/jpeg,image/png">
+                  </div>
+                  <label for="txnRef" style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:5px;">Transaction / Reference ID (optional)</label>
+                  <input type="text" id="txnRef" placeholder="e.g. UPI Ref No." class="mono" style="width:100%;padding:9px 11px;border:1.5px solid #DDD8EF;border-radius:7px;font-size:13px;">
+                </div>
+              </div>
+              <div class="err-msg" style="margin-top:8px;">Please upload proof of payment.</div>
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn">Complete Registration</button>
+          </form>
+        </div>
+        <div class="card-preview-wrap">
+          <div class="live-card-frame">
+            <canvas id="liveCardCanvas" width="1200" height="720" style="display:none;"></canvas>
+            <img id="liveCardPreview" style="width:100%;border-radius:16px;box-shadow:var(--shadow);display:none;">
+            <div id="liveCardEmpty" class="live-card-empty">Fill in your details to see your ID card take shape here.</div>
+            <a id="liveCardDownload" style="display:none;"></a>
+            <div class="ac-note">This is a live preview of your ID card — it updates as you fill the form. Your official Reg. No. and QR code are added once you submit.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="reg-success" class="panel success-box" style="display:none;max-width:520px;margin:0 auto;">
+      <div class="stamp">✓</div>
+      <h2 class="display">You're Registered!</h2>
+      <p class="sub" style="margin-bottom:0;">Your membership has been recorded. You're now eligible to take part in the player auction.</p>
+      <div class="regno mono" id="successRegNo">REG. NO. —</div>
+      <canvas id="idCardCanvas" width="1200" height="720" style="display:none;"></canvas>
+      <div id="idCardArea" style="margin-top:22px;display:none;">
+        <img id="idCardPreview" style="width:100%;border-radius:12px;box-shadow:var(--shadow);">
+        <div style="margin-top:16px;">
+          <a id="idCardDownload" class="btn-outline" style="text-decoration:none;display:inline-block;" download="id-card.png">Download ID Card</a>
+        </div>
+      </div>
+      <div style="margin-top:16px;"><button class="btn-outline" onclick="resetForm()">Register Another Player</button></div>
+    </div>
+  </section>
+
+  <section id="view-admin" style="display:none;">
+    <div id="admin-lock" class="admin-lock">
+      <div class="vault">🔒</div>
+      <h2 class="display">Admin Access</h2>
+      <p class="sub">Enter the admin password to view the player roster.</p>
+      <input type="text" id="adminPass" placeholder="Password" onkeydown="if(event.key==='Enter')checkAdminPass()">
+      <br>
+      <button onclick="checkAdminPass()">Unlock</button>
+      <div class="lock-err" id="lockErr">Incorrect password. Please try again.</div>
+    </div>
+    <div id="admin-panel" style="display:none;">
+      <div style="text-align:right;margin-bottom:12px;">
+        <span id="roleBadge" class="chip" style="cursor:default;"></span>
+      </div>
+      <div class="qr-admin-box">
+        <img id="qrAdminPreview" src="" style="display:none;">
+        <div class="txt">Upload the payment QR code (UPI / bank) that players will see on the registration page. It's saved once and shown to every player.</div>
+        <label class="up">Upload / Replace QR<input type="file" id="qrUploadInput" accept="image/jpeg,image/png"></label>
+      </div>
+      <div style="text-align:right;margin-bottom:16px;">
+        <button class="btn-outline" onclick="togglePassBox()">Change Admin Password</button>
+        <button class="btn-outline" id="superPassBtn" style="display:none;" onclick="toggleSuperPassBox()">Change Super Admin Password</button>
+      </div>
+      <div class="qr-admin-box" id="changePassBox" style="display:none;">
+        <div class="txt" style="margin-bottom:10px;">Change the admin password used to unlock this panel.</div>
+        <input type="password" id="newAdminPass" placeholder="New password" style="width:100%;padding:10px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:14px;margin-bottom:8px;">
+        <input type="password" id="confirmAdminPass" placeholder="Confirm new password" style="width:100%;padding:10px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:14px;margin-bottom:8px;">
+        <button class="btn-outline" onclick="changeAdminPassword()">Update Password</button>
+        <div id="passChangeMsg" style="font-size:12.5px;margin-top:8px;"></div>
+      </div>
+      <div class="qr-admin-box" id="changeSuperPassBox" style="display:none;">
+        <div class="txt" style="margin-bottom:10px;">Change the Super Admin password (this one can also delete registrations).</div>
+        <input type="password" id="newSuperAdminPass" placeholder="New Super Admin password" style="width:100%;padding:10px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:14px;margin-bottom:8px;">
+        <input type="password" id="confirmSuperAdminPass" placeholder="Confirm new password" style="width:100%;padding:10px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:14px;margin-bottom:8px;">
+        <button class="btn-outline" onclick="changeSuperAdminPassword()">Update Password</button>
+        <div id="superPassChangeMsg" style="font-size:12.5px;margin-top:8px;"></div>
+      </div>
+      <div class="qr-admin-box" id="regCapBox" style="display:none;">
+        <div class="txt" id="regCapStatus" style="margin-bottom:10px;">Checking registration status…</div>
+        <button class="btn-outline" id="regCapToggleBtn" onclick="toggleRegistrationCap()">Force Registration Open</button>
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <span class="txt">Registration cap:</span>
+          <input type="number" id="capInput" min="1" max="5000" style="width:90px;padding:9px;border:1.5px solid #E3D6A8;border-radius:8px;">
+          <button class="btn-outline" onclick="saveRegCap()">Set cap</button>
+          <span id="capMsg" style="font-size:12.5px;"></span>
+        </div>
+      </div>
+      <div class="stat-row" id="adminStatRow"></div>
+      <div class="admin-bar">
+        <div class="scoreboard-total"><span class="num" id="totalCount">0</span><span class="lbl">Registered Players</span></div>
+        <div class="admin-controls">
+          <input type="text" id="searchBox" placeholder="Search name or mobile..." oninput="renderRoster()">
+          <div class="chip active" data-filter="All" onclick="setFilter('All')">All</div>
+          <div class="chip" data-filter="Batsman" onclick="setFilter('Batsman')">Batsman</div>
+          <div class="chip" data-filter="Bowler" onclick="setFilter('Bowler')">Bowler</div>
+          <div class="chip" data-filter="All-Rounder" onclick="setFilter('All-Rounder')">All-Rounder</div>
+          <div class="chip" data-filter="Wicket Keeper" onclick="setFilter('Wicket Keeper')">WK</div>
+          <button class="btn-outline" onclick="exportExcel()">Export Excel</button>
+          <button class="btn-outline" onclick="exportPdf()">Export PDF</button>
+        </div>
+      </div>
+      <div id="rosterWrap"><div class="loading-row">Loading roster…</div></div>
+    </div>
+  </section>
+
+  <section id="view-auction" style="display:none;">
+    <div id="auction-lock" class="admin-lock">
+      <div class="vault">🔒</div>
+      <h2 class="display">Auction Access</h2>
+      <p class="sub">Enter the admin password to run the auction.</p>
+      <input type="text" id="auctionPass" placeholder="Password" onkeydown="if(event.key==='Enter')checkAuctionPass()">
+      <br>
+      <button onclick="checkAuctionPass()">Unlock</button>
+      <div class="lock-err" id="auctionLockErr">Incorrect password. Please try again.</div>
+    </div>
+    <div id="auction-panel" style="display:none;">
+      <div class="qr-admin-box" style="border-top:3px solid #D4AF37;">
+        <div class="txt"><b>📺 Live Stage (projector) mode</b><br>Full-screen auction view for the big screen: one player at a time, SOLD animation with sound, and a live team-purse board.</div>
+        <button class="btn-outline" onclick="openStage()">Open Live Stage</button>
+      </div>
+      <div class="qr-admin-box" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <div class="txt" style="flex-basis:100%;"><b>🏆 Tournament branding (changes the header, ID cards, PDFs, QR text and auction screen instantly)</b></div>
+        <input type="text" id="brL1" placeholder="Title e.g. BORLI PREMIER LEAGUE" style="flex:1;min-width:200px;padding:10px;border:1.5px solid #E3D6A8;border-radius:8px;">
+        <input type="text" id="brL2" placeholder="Season e.g. SEASON 2" style="width:150px;padding:10px;border:1.5px solid #E3D6A8;border-radius:8px;">
+        <input type="text" id="brPresenter" placeholder="Presented by e.g. Sidra and Devansh Sports" style="flex:1;min-width:220px;padding:10px;border:1.5px solid #E3D6A8;border-radius:8px;">
+        <input type="text" id="brDate" placeholder="Date e.g. January 2027" style="width:170px;padding:10px;border:1.5px solid #E3D6A8;border-radius:8px;">
+        <button class="btn-outline" onclick="saveBrand()">Save</button>
+        <span id="brMsg" style="font-size:12.5px;"></span>
+      </div>
+      <div class="qr-admin-box">
+        <div class="txt" style="flex-basis:100%;"><b>🗓 Event details (shown on the public header with a countdown)</b></div>
+        <input type="text" id="evLabel" placeholder="Label e.g. Player Auction" style="width:170px;padding:10px;border:1.5px solid #E3D6A8;border-radius:8px;">
+        <input type="datetime-local" id="evAt" style="padding:10px;border:1.5px solid #E3D6A8;border-radius:8px;">
+        <input type="text" id="evVenue" placeholder="Venue" style="flex:1;min-width:160px;padding:10px;border:1.5px solid #E3D6A8;border-radius:8px;">
+        <input type="text" id="evNote" placeholder="Short note (optional)" style="flex:1;min-width:160px;padding:10px;border:1.5px solid #E3D6A8;border-radius:8px;">
+        <button class="btn-outline" onclick="saveEventInfo()">Save</button>
+        <span id="evMsg" style="font-size:12.5px;"></span>
+      </div>
+      <div class="qr-admin-box">
+        <div class="txt" style="margin-bottom:10px;">Make an owner out of an already-registered member — owners aren't outsiders, so pick them from the registration list below and give them a starting budget.</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <select id="ownerMemberSelect" style="flex:1;min-width:180px;padding:10px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:14px;">
+            <option value="">Select registered member…</option>
+          </select>
+          <input type="text" id="ownerTeamName" placeholder="Team name" style="width:160px;padding:10px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:14px;">
+          <input type="number" id="ownerBudget" placeholder="Starting budget" style="width:150px;padding:10px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:14px;">
+          <button class="btn-outline" onclick="addOwner()">Add Owner</button>
+        </div>
+        <div class="txt" style="margin-top:8px;">Login details are generated automatically — username is their first name (with a number added if two owners share one, e.g. "rajesh" / "rajesh1"), password is their first 3 initials + 12345. Both are shown once right after you add them, and you can reset the password anytime from the list below. The member picked as owner is automatically kept out of the live auction.</div>
+        <div id="ownerAddMsg" style="font-size:12.5px;margin-top:8px;"></div>
+      </div>
+
+      <div id="ownersWrap" style="margin-bottom:24px;"></div>
+
+      <div class="stat-row" id="auctionStatRow"></div>
+      <div class="admin-bar">
+        <div class="scoreboard-total"><span class="num" id="auctionTotalCount">0</span><span class="lbl">Total Players</span></div>
+        <div class="admin-controls">
+          <input type="text" id="auctionSearchBox" placeholder="Search name or mobile..." oninput="renderAuctionBoard()">
+          <div class="chip active" data-afilter="All" onclick="setAuctionFilter('All')">All</div>
+          <div class="chip" data-afilter="Available" onclick="setAuctionFilter('Available')">Available</div>
+          <div class="chip" data-afilter="Unsold" onclick="setAuctionFilter('Unsold')">Unsold</div>
+          <div class="chip" data-afilter="Sold" onclick="setAuctionFilter('Sold')">Sold</div>
+        </div>
+      </div>
+      <div id="auctionBoardWrap"><div class="loading-row">Loading auction board…</div></div>
+    </div>
+  </section>
+
+  <section id="view-owner" style="display:none;">
+    <div id="owner-lock" class="admin-lock">
+      <div class="vault">🏏</div>
+      <h2 class="display">Owner Login</h2>
+      <p class="sub">Enter the username and password your admin gave you.</p>
+      <input type="text" id="ownerLoginName" placeholder="Username (your first name)" autocomplete="username">
+      <input type="text" id="ownerLoginPass" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')ownerLogin()">
+      <br>
+      <button onclick="ownerLogin()">Log In</button>
+      <div class="lock-err" id="ownerLockErr">Incorrect name or password. Please try again.</div>
+    </div>
+    <div id="owner-panel" style="display:none;">
+      <div class="admin-bar">
+        <div class="scoreboard-total">
+          <span class="num" id="ownerRemaining">₹0</span>
+          <span class="lbl">Budget Remaining</span>
+        </div>
+        <div class="admin-controls">
+          <span style="font-size:13px;color:var(--ink-soft);">Logged in as <b id="ownerWelcomeName" style="color:var(--ink);"></b></span>
+          <input type="text" id="ownerSearchBox" placeholder="Search name..." oninput="renderOwnerBoard()">
+          <div class="chip active" data-ofilter="Available" onclick="setOwnerFilter('Available')">Available</div>
+          <div class="chip" data-ofilter="Unsold" onclick="setOwnerFilter('Unsold')">Unsold</div>
+          <div class="chip" data-ofilter="Sold" onclick="setOwnerFilter('Sold')">Sold</div>
+          <div class="chip" data-ofilter="All" onclick="setOwnerFilter('All')">All</div>
+          <button class="btn-outline" onclick="ownerLogout()">Log Out</button>
+        </div>
+      </div>
+      <div id="ownerBudgetLine" style="font-size:12.5px;color:var(--ink-soft);margin:-10px 0 18px;"></div>
+      <div id="ownerBoardWrap"><div class="loading-row">Loading player board…</div></div>
+    </div>
+  </section>
+
+  <section id="view-teams" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;margin-bottom:4px;">
+      <div>
+        <h2 class="display" style="margin-bottom:4px;" id="teamsHeading">The Teams</h2>
+        <p class="sub" style="margin:0;">Each team's full squad — bought in the auction or pre-assigned as a core pick. <span style="color:#E11D48;font-weight:700;">48 Plus</span> players are shown in bold red.</p>
+      </div>
+      <button class="btn-outline" onclick="copyRosterAsText()">📋 Copy roster for WhatsApp</button>
+    </div>
+    <div id="teamsStats"></div>
+    <div id="teamsWrap"><div class="loading-row">Loading teams…</div></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;margin:34px 0 10px;">
+      <div>
+        <h2 class="display" style="margin-bottom:4px;" id="unsoldHeading">Unsold Players</h2>
+        <p class="sub" style="margin:0;">Players not sold to any team yet. <span style="color:#E11D48;font-weight:700;">48 Plus</span> players are shown in bold red.</p>
+      </div>
+      <a class="btn-outline" href="/api/unsold/pdf" download style="text-decoration:none;">📄 Unsold list PDF</a>
+    </div>
+    <div id="unsoldWrap"><div class="loading-row">Loading unsold players…</div></div>
+  </section>
+</main>
+
+<footer class="site"><div class="f-brand"><img src="/konkantech-logo.jpg" alt="KonkanTech"><span>Made by KonkanTech</span></div><div style="margin-bottom:6px;">Presented by <span id="footPresenter">Sidra and Devansh Sports</span></div><span id="footTitle">BORLI PREMIER LEAGUE SEASON 2</span> · Auction eligibility requires completed registration</footer>
+<div class="modal-bg" id="imgModal" onclick="this.classList.remove('show')"><img id="modalImg" src=""></div>
+
+<script>window.BRAND_INIT = /*__BRAND_JSON__*/ null;</script>
+<script>
+/* ===== Branding (editable by Admin; server injects the saved values into window.BRAND_INIT) ===== */
+let BRAND = Object.assign({ line1:'BORLI PREMIER LEAGUE', line2:'SEASON 2', presenter:'Sidra and Devansh Sports', dateText:'January 2027' }, window.BRAND_INIT || {});
+if(!window.BRAND_INIT){ fetch('/api/branding').then(r=>r.json()).then(b=>{ BRAND = Object.assign(BRAND, b); applyBrand(); if(typeof fillBrandForm==='function') fillBrandForm(); }).catch(()=>{}); }
+function brandTitle(){ return (BRAND.line1 + ' ' + BRAND.line2).trim(); }
+function brandSub(){ return BRAND.line2 + (BRAND.dateText ? ' · ' + BRAND.dateText : ''); }
+function applyBrand(){
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+  set('brandEyebrow', BRAND.presenter + ' present');
+  set('brandL1', BRAND.line1);
+  set('brandL2', brandSub());
+  set('footPresenter', BRAND.presenter);
+  set('footTitle', brandTitle());
+  set('stT1', brandTitle());
+  set('stT2', 'Player Auction · ' + BRAND.presenter + ' · Made by KonkanTech');
+  document.title = brandTitle() + ' — Player Registration';
+  if(typeof buildTicker === 'function') buildTicker();
+}
+const roleColors = { "Batsman":"#FF5A36", "Bowler":"#5B21B6", "All-Rounder":"#F59E0B", "Wicket Keeper":"#0EA5E9" };
+// Age category defaults to "Under 48" (pre-selected on the form) — only "48 Plus" players
+// need to actively tap the other card. Makes filtering later much easier since it's never blank.
+let selectedRole = null, selectedAge = 'Under 48', photoFile = null, proofFile = null;
+let players = [], activeFilter = "All", ageFilter = "All", retainedFilter = "All", sortKey = "id", sortDir = -1, adminPassword = "";
+let registrationCap = null; // fetched once and reused to compute "slots left" on the dashboard stat cards
+let isAdminUnlocked = false;
+let isSuperAdmin = false;
+let owners = [], auctionFilter = "All";
+let ownerName = "", ownerPassword = "", ownerInfo = null, ownerBoard = [], ownerFilter = "Available", ownerPollTimer = null;
+
+function switchView(view){
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active', b.dataset.view===view));
+  document.getElementById('view-register').style.display = view==='register' ? '' : 'none';
+  document.getElementById('view-admin').style.display = view==='admin' ? '' : 'none';
+  document.getElementById('view-auction').style.display = view==='auction' ? '' : 'none';
+  document.getElementById('view-owner').style.display = view==='owner' ? '' : 'none';
+  document.getElementById('view-teams').style.display = view==='teams' ? '' : 'none';
+  if(view==='admin' && document.getElementById('admin-panel').style.display !== 'none'){ loadRoster(); loadOwners().then(renderAdminStatRow); }
+  if(view==='teams'){ loadTeams(); }
+  if(view==='auction' && isAdminUnlocked){
+    document.getElementById('auction-lock').style.display = 'none';
+    document.getElementById('auction-panel').style.display = 'block';
+    // Owners must be loaded BEFORE the board renders, or the "Select owner…" dropdown
+    // draws empty (it only reads from the `owners` array at render time).
+    loadOwners().then(loadAuctionBoard);
+  }
+  if(view==='owner' && ownerInfo){
+    document.getElementById('owner-lock').style.display = 'none';
+    document.getElementById('owner-panel').style.display = 'block';
+    loadOwnerBoard();
+  }
+  // Only poll for live updates while the owner tab is actually visible
+  if(ownerPollTimer){ clearInterval(ownerPollTimer); ownerPollTimer = null; }
+  if(view==='owner' && ownerInfo){
+    ownerPollTimer = setInterval(loadOwnerBoard, 4000);
+  }
+}
+
+document.querySelectorAll('#roleGrid .role-card').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    document.querySelectorAll('#roleGrid .role-card').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedRole = card.dataset.role;
+    document.getElementById('f-role').classList.remove('invalid');
+    updatePreview();
+  });
+});
+
+document.querySelectorAll('#ageGrid .role-card').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    document.querySelectorAll('#ageGrid .role-card').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedAge = card.dataset.age;
+    document.getElementById('f-age').classList.remove('invalid');
+    updatePreview();
+  });
+});
+
+function compressImage(file, maxDim, quality){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let w = img.width, h = img.height;
+        if(w > h && w > maxDim){ h = Math.round(h*maxDim/w); w = maxDim; }
+        else if(h > maxDim){ w = Math.round(w*maxDim/h); h = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        canvas.toBlob(blob=>resolve({blob, dataUrl:canvas.toDataURL('image/jpeg',quality)}), 'image/jpeg', quality);
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+document.getElementById('photoInput').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  if(file.size > 2*1024*1024){ alert('Photo must be under 2MB.'); e.target.value=''; return; }
+  const {blob, dataUrl} = await compressImage(file, 500, 0.82);
+  photoFile = new File([blob], 'photo.jpg', {type:'image/jpeg'});
+  const prev = document.getElementById('photoPreview');
+  prev.src = dataUrl; prev.style.display='block';
+  document.getElementById('photoTxt').innerHTML = '<b>Photo selected</b><br>Tap to change';
+  document.getElementById('f-photo').classList.remove('invalid');
+  updatePreview(dataUrl);
+});
+
+document.getElementById('proofInput').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const {blob, dataUrl} = await compressImage(file, 700, 0.75);
+  proofFile = new File([blob], 'proof.jpg', {type:'image/jpeg'});
+  const prev = document.getElementById('proofPreview');
+  prev.src = dataUrl; prev.style.display='block';
+  document.getElementById('proofTxt').innerHTML = '<b>Payment proof uploaded</b><br>Tap to change';
+  document.getElementById('f-payment').classList.remove('invalid');
+});
+
+function updatePreview(photoDataUrl){
+  const name = document.getElementById('fullName').value.trim();
+  const loc = document.getElementById('location').value.trim();
+  const mobile = document.getElementById('mobile').value.trim();
+  const existingPreview = document.getElementById('photoPreview');
+  const hasPhoto = !!(photoDataUrl || existingPreview.style.display==='block');
+  if(!name && !loc && !mobile && !selectedRole && !hasPhoto){
+    document.getElementById('liveCardEmpty').style.display = 'flex';
+    document.getElementById('liveCardPreview').style.display = 'none';
+    return;
+  }
+  document.getElementById('liveCardEmpty').style.display = 'none';
+  generateIdCard(
+    {
+      name: name || 'Your Name',
+      location: loc || 'Your location',
+      mobile: mobile || '__________',
+      role: selectedRole || 'Role pending',
+      ageCategory: selectedAge,
+      regNo: 'PENDING',
+      photoUrl: photoDataUrl || (hasPhoto ? existingPreview.src : null)
+    },
+    { canvas:'liveCardCanvas', preview:'liveCardPreview', download:'liveCardDownload', area:null, note:null }
+  );
+}
+['fullName','location','mobile'].forEach(id=>{ document.getElementById(id).addEventListener('input', ()=>updatePreview()); });
+
+async function loadQR(){
+  try{
+    const res = await fetch('/api/qr-code');
+    const data = await res.json();
+    if(data.url){
+      document.getElementById('qrBox').innerHTML = `<img src="${data.url}"><div class="qr-cap">Scan to Pay</div>`;
+      const adminImg = document.getElementById('qrAdminPreview');
+      adminImg.src = data.url; adminImg.style.display = 'block';
+    }
+  }catch(err){ console.error('Could not load QR code', err); }
+}
+
+document.getElementById('qrUploadInput').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const fd = new FormData();
+  fd.append('qr', file);
+  try{
+    const res = await fetch('/api/qr-code', { method:'POST', headers:{'x-admin-password':adminPassword}, body: fd });
+    if(!res.ok) throw new Error((await res.json()).error || 'Upload failed');
+    loadQR();
+  }catch(err){ alert('Could not save the QR code: ' + err.message); }
+});
+
+function markInvalid(id){ document.getElementById(id).classList.add('invalid'); }
+function clearInvalid(id){ document.getElementById(id).classList.remove('invalid'); }
+
+document.getElementById('regForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  let ok = true;
+  const name = document.getElementById('fullName').value.trim();
+  const loc = document.getElementById('location').value.trim();
+  const mobile = document.getElementById('mobile').value.trim();
+
+  if(!name){ markInvalid('f-name'); ok=false; } else clearInvalid('f-name');
+  if(!loc){ markInvalid('f-loc'); ok=false; } else clearInvalid('f-loc');
+  if(!/^\d{10}$/.test(mobile)){ markInvalid('f-mobile'); ok=false; } else clearInvalid('f-mobile');
+  if(!selectedRole){ markInvalid('f-role'); ok=false; } else clearInvalid('f-role');
+  if(!selectedAge){ markInvalid('f-age'); ok=false; } else clearInvalid('f-age');
+  if(!photoFile){ markInvalid('f-photo'); ok=false; } else clearInvalid('f-photo');
+  if(!proofFile){ markInvalid('f-payment'); ok=false; } else clearInvalid('f-payment');
+
+  if(!ok){ document.querySelector('.field.invalid').scrollIntoView({behavior:'smooth', block:'center'}); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = 'Submitting…';
+
+  const fd = new FormData();
+  fd.append('name', name);
+  fd.append('location', loc);
+  fd.append('mobile', mobile);
+  fd.append('role', selectedRole);
+  fd.append('ageCategory', selectedAge);
+  fd.append('txnRef', document.getElementById('txnRef').value.trim());
+  fd.append('photo', photoFile);
+  fd.append('proof', proofFile);
+
+  try{
+    const res = await fetch('/api/register', { method:'POST', body: fd });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Registration failed.');
+    document.getElementById('successRegNo').textContent = 'REG. NO. ' + data.regNo + (data.categorySerial ? '  ·  ' + data.categorySerial : '');
+    document.getElementById('reg-form-wrap').style.display = 'none';
+    document.getElementById('reg-success').style.display = 'block';
+    generateIdCard({ name, location: loc, mobile, role: selectedRole, ageCategory: data.ageCategory, regNo: data.regNo, categorySerial: data.categorySerial, qrDataUrl: data.qrDataUrl, photoFile });
+  }catch(err){
+    alert('Could not save your registration.\n\nReason: ' + err.message + '\n\nMake sure the local server is running, then try again.');
+    console.error(err);
+    btn.disabled = false; btn.textContent = 'Complete Registration';
+  }
+});
+
+function resetForm(){
+  document.getElementById('regForm').reset();
+  selectedRole = null; selectedAge = 'Under 48'; photoFile = null; proofFile = null;
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
+  const defaultAgeCard = document.querySelector('#ageGrid .role-card[data-age="Under 48"]');
+  if(defaultAgeCard) defaultAgeCard.classList.add('selected');
+  document.getElementById('photoPreview').style.display='none';
+  document.getElementById('photoTxt').innerHTML = '<b>Tap to upload</b><br>JPG or PNG, up to 2MB';
+  document.getElementById('proofPreview').style.display='none';
+  document.getElementById('proofTxt').innerHTML = '<b>Scan QR &amp; pay, then upload your payment screenshot here</b>';
+  document.querySelectorAll('.field').forEach(f=>f.classList.remove('invalid'));
+  updatePreview();
+  document.getElementById('reg-success').style.display='none';
+  document.getElementById('idCardArea').style.display='none';
+  document.getElementById('reg-form-wrap').style.display='';
+  const btn = document.getElementById('submitBtn');
+  btn.disabled=false; btn.textContent='Complete Registration';
+  checkRegistrationStatus();
+}
+
+// ---------- ID CARD GENERATION ----------
+// Draws a premium landscape player ID card on a hidden canvas using the photo
+// already picked for registration (no re-upload/network round-trip needed),
+// then shows it as a downloadable PNG image.
+function crRoundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r);
+  ctx.arcTo(x, y, x+w, y, r);
+  ctx.closePath();
+}
+
+function crFitText(ctx, text, maxWidth, startSize, minSize, fontWeight, fontFamily){
+  let size = startSize;
+  while(size > minSize){
+    ctx.font = `${fontWeight} ${size}px ${fontFamily}`;
+    if(ctx.measureText(text).width <= maxWidth) break;
+    size -= 2;
+  }
+  return size;
+}
+
+// Subtle leather-grain noise, drawn once and cached per canvas size for speed
+let _crNoiseCache = null;
+function crLeatherNoise(ctx, W, H){
+  if(!_crNoiseCache){
+    const off = document.createElement('canvas');
+    off.width = W; off.height = H;
+    const octx = off.getContext('2d');
+    for(let i=0;i<2200;i++){
+      const x = Math.random()*W, y = Math.random()*H;
+      const a = Math.random()*0.05;
+      octx.fillStyle = Math.random() > 0.5 ? `rgba(255,255,255,${a})` : `rgba(0,0,0,${a})`;
+      octx.beginPath();
+      octx.arc(x, y, Math.random()*1.4+0.3, 0, Math.PI*2);
+      octx.fill();
+    }
+    _crNoiseCache = off;
+  }
+  ctx.drawImage(_crNoiseCache, 0, 0);
+}
+
+// Repeating curved text around a circle (the coin-ring effect around the photo).
+// Pass in a text long enough to over-cover the circumference — the loop stops
+// automatically once it has wrapped exactly one full circle, so it always tiles evenly
+// with no gap and no overlap, regardless of font size or radius.
+function crArcText(ctx, text, cx, cy, radius, font, color, letterSpacingDeg){
+  ctx.save();
+  ctx.font = font;
+  ctx.fillStyle = color;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.translate(cx, cy);
+  ctx.rotate(-Math.PI/2);
+  let angle = 0;
+  const fullCircle = Math.PI * 2;
+  for(let i=0;i<text.length && angle < fullCircle;i++){
+    const ch = text[i];
+    const chWidth = ctx.measureText(ch).width;
+    const chAngle = (chWidth / radius) + (letterSpacingDeg * Math.PI/180);
+    if(angle + chAngle > fullCircle) break;
+    ctx.save();
+    ctx.rotate(angle + chAngle/2);
+    ctx.translate(0, -radius);
+    ctx.fillText(ch, 0, 0);
+    ctx.restore();
+    angle += chAngle;
+  }
+  ctx.restore();
+}
+
+// Clean translucent "BPL" watermark, top-right — reads clearly at a glance,
+// unlike a hand-drawn bat-and-ball icon which doesn't render recognizably at small sizes.
+function crWatermarkCrest(ctx, x, y, size, color){
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.globalAlpha = 0.09;
+  ctx.fillStyle = color;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = `800 ${size}px Georgia, serif`;
+  ctx.fillText('BPL', 0, 0);
+  ctx.globalAlpha = 0.14;
+  ctx.lineWidth = size * 0.012;
+  ctx.strokeStyle = color;
+  ctx.beginPath();
+  ctx.arc(0, 0, size * 0.78, 0, Math.PI*2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+// Small foil "hologram" seal (rainbow sheen) with the club initials
+function crHologramSeal(ctx, cx, cy, r){
+  ctx.save();
+  const grad = ctx.createLinearGradient(cx-r, cy-r, cx+r, cy+r);
+  grad.addColorStop(0, '#cfe8ff');
+  grad.addColorStop(0.25, '#e6d6ff');
+  grad.addColorStop(0.5, '#ffe6f2');
+  grad.addColorStop(0.75, '#fff6cf');
+  grad.addColorStop(1, '#d6fff0');
+  ctx.beginPath();
+  crRoundRect(ctx, cx-r, cy-r, r*2, r*2, r*0.22);
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.globalAlpha = 0.35;
+  for(let i=0;i<5;i++){
+    ctx.beginPath();
+    ctx.moveTo(cx-r, cy-r+ (i*r*0.5));
+    ctx.lineTo(cx-r+(i*r*0.5), cy-r);
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+  ctx.lineWidth = 2;
+  crRoundRect(ctx, cx-r, cy-r, r*2, r*2, r*0.22);
+  ctx.stroke();
+  ctx.fillStyle = '#3A2E10';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = `800 ${r*0.5}px Georgia, serif`;
+  ctx.fillText('S2', cx, cy-r*0.22);
+  ctx.font = `700 ${r*0.24}px Arial`;
+  ctx.fillText('BPL', cx, cy+r*0.32);
+  ctx.restore();
+}
+
+function generateIdCard(data, targetIds){
+  targetIds = targetIds || { canvas:'idCardCanvas', preview:'idCardPreview', download:'idCardDownload', area:'idCardArea', note:null };
+  const canvas = document.getElementById(targetIds.canvas);
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const draw = async (photoImg) => {
+    let logoImg = null;
+    try{ logoImg = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src='/konkantech-logo.jpg'; }); }catch(e){}
+    // ---------- Background: deep navy "stadium night" gradient + warm glows ----------
+    const bgGrad = ctx.createLinearGradient(0,0,W,H);
+    bgGrad.addColorStop(0, '#14110a');
+    bgGrad.addColorStop(0.55, '#070706');
+    bgGrad.addColorStop(1, '#000000');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0,0,W,H);
+    const glowRed = ctx.createRadialGradient(W*0.85,H*0.85,10,W*0.85,H*0.85,W*0.5);
+    glowRed.addColorStop(0, 'rgba(212,175,55,0.16)');
+    glowRed.addColorStop(1, 'rgba(212,175,55,0)');
+    ctx.fillStyle = glowRed; ctx.fillRect(0,0,W,H);
+    const glowGold = ctx.createRadialGradient(W*0.12,H*0.15,10,W*0.12,H*0.15,W*0.4);
+    glowGold.addColorStop(0, 'rgba(217,177,67,0.10)');
+    glowGold.addColorStop(1, 'rgba(217,177,67,0)');
+    ctx.fillStyle = glowGold; ctx.fillRect(0,0,W,H);
+
+    // Faint giant trophy watermark, bottom-right, so the card never reads empty
+    ctx.save();
+    ctx.globalAlpha = 0.06;
+    ctx.textAlign = 'center';
+    ctx.font = '900 340px Georgia, serif';
+    ctx.fillStyle = '#D9B143';
+    ctx.fillText('🏆', W*0.86, H*1.02);
+    ctx.restore();
+
+    // Outer gold border (thick) + inner hairline
+    ctx.strokeStyle = '#D9B143';
+    ctx.lineWidth = 6;
+    crRoundRect(ctx, 6, 6, W-12, H-12, 22);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(217,177,67,0.45)';
+    ctx.lineWidth = 1.5;
+    crRoundRect(ctx, 18, 18, W-36, H-36, 16);
+    ctx.stroke();
+
+    // Corner flourish brackets, top-left and bottom-right
+    ctx.strokeStyle = 'rgba(217,177,67,0.55)';
+    ctx.lineWidth = 2;
+    const flen = 70;
+    ctx.beginPath(); ctx.moveTo(30, 30+flen); ctx.lineTo(30, 30); ctx.lineTo(30+flen, 30); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W-30, H-30-flen); ctx.lineTo(W-30, H-30); ctx.lineTo(W-30-flen, H-30); ctx.stroke();
+
+    // Header banner: red-to-transparent wash across the top
+    const bannerH = 150;
+    const bannerGrad = ctx.createLinearGradient(0,0,0,bannerH);
+    bannerGrad.addColorStop(0, 'rgba(212,175,55,0.34)');
+    bannerGrad.addColorStop(1, 'rgba(212,175,55,0)');
+    ctx.fillStyle = bannerGrad;
+    ctx.fillRect(0,0,W,bannerH);
+
+    // Sponsor logo medallion, top-left
+    // KonkanTech logo on a white rounded badge, top-left
+    ctx.save();
+    crRoundRect(ctx, 24, 36, 196, 76, 12); ctx.fillStyle = '#ffffff'; ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = '#D9B143'; ctx.stroke();
+    ctx.fillStyle = '#7a6a2a'; ctx.font = '700 10px Arial'; ctx.textAlign = 'left';
+    ctx.save(); ctx.letterSpacing = '2px'; ctx.fillText('MADE BY', 36, 52); ctx.restore();
+    if(logoImg){ ctx.drawImage(logoImg, 36, 60, 172, 172*160/707); }
+    ctx.restore();
+
+    // Trophy mark, top-right
+    ctx.font = '40px Georgia, serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#F3D576';
+    ctx.fillText('🏆', W-70, 68);
+
+    // Title: tournament name (big, white) + season/date line (gold)
+    ctx.textAlign = 'center';
+    const cardL1 = BRAND.line1.toUpperCase(), cardL2 = brandSub().toUpperCase();
+    const h1Size = crFitText(ctx, cardL1, W-440, 58, 32, '800', 'Georgia, serif');
+    ctx.font = `800 ${h1Size}px Georgia, serif`;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(cardL1, W/2, 68);
+    const h2Size = crFitText(ctx, cardL2, W-440, 28, 18, '700', 'Georgia, serif');
+    ctx.font = `700 ${h2Size}px Georgia, serif`;
+    const tg = ctx.createLinearGradient(W/2-300,0,W/2+300,0);
+    tg.addColorStop(0,'#9C7410'); tg.addColorStop(0.5,'#F7E08A'); tg.addColorStop(1,'#9C7410');
+    ctx.fillStyle = tg;
+    ctx.save(); ctx.letterSpacing='3px';
+    ctx.fillText(cardL2, W/2, 104);
+    ctx.restore();
+
+    ctx.font = '600 13px Arial';
+    ctx.save(); ctx.letterSpacing='2px';
+    ctx.fillStyle = 'rgba(243,238,221,0.8)';
+    ctx.fillText('OFFICIAL PLAYER IDENTITY CARD  ·  ' + BRAND.presenter.toUpperCase(), W/2, 132);
+    ctx.restore();
+
+    // ---------- Photo medallion, left side ----------
+    const cx = 204, cy = 383, rPhoto = 112, rRing = 138;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, rRing+8, 0, Math.PI*2);
+    ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 26;
+    ctx.fillStyle = '#000'; ctx.fill();
+    ctx.restore();
+
+    const ringGrad = ctx.createLinearGradient(cx-rRing, cy-rRing, cx+rRing, cy+rRing);
+    ringGrad.addColorStop(0, '#F3D576');
+    ringGrad.addColorStop(0.5, '#D9B143');
+    ringGrad.addColorStop(1, '#8a6d1a');
+    ctx.beginPath(); ctx.arc(cx, cy, rRing, 0, Math.PI*2);
+    ctx.fillStyle = ringGrad; ctx.fill();
+
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, rPhoto, 0, Math.PI*2); ctx.closePath(); ctx.clip();
+    ctx.fillStyle = '#1b1f27'; ctx.fillRect(cx-rPhoto, cy-rPhoto, rPhoto*2, rPhoto*2);
+    if(photoImg){
+      const imgRatio = photoImg.width / photoImg.height;
+      let dw, dh, dx, dy;
+      if(imgRatio > 1){ dh = rPhoto*2; dw = dh*imgRatio; dx = cx-dw/2; dy = cy-rPhoto; }
+      else { dw = rPhoto*2; dh = dw/imgRatio; dx = cx-rPhoto; dy = cy-dh/2; }
+      ctx.drawImage(photoImg, dx, dy, dw, dh);
+    } else {
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = `${rPhoto*0.8}px Arial`;
+      ctx.fillStyle = 'rgba(217,177,67,0.5)';
+      ctx.fillText('🏏', cx, cy+4);
+      ctx.textBaseline = 'alphabetic';
+    }
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(cx, cy, rPhoto, 0, Math.PI*2);
+    ctx.lineWidth = 4; ctx.strokeStyle = '#000000'; ctx.stroke();
+
+    // Ribbon under the photo
+    ctx.textAlign = 'center';
+    ctx.font = '700 13px Arial';
+    ctx.save(); ctx.letterSpacing='1.5px';
+    ctx.fillStyle = '#F3D576';
+    ctx.fillText('PLAY · COMPETE', cx, cy+rRing+34);
+    ctx.fillText('CELEBRATE', cx, cy+rRing+54);
+    ctx.restore();
+
+    // ---------- Registration panel (silver plate), bottom-left ----------
+    const panelX = 38, panelY = 612, panelW = 348, panelH = 74;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.4)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 3;
+    const steelGrad = ctx.createLinearGradient(panelX, panelY, panelX, panelY+panelH);
+    steelGrad.addColorStop(0, '#E8ECEF');
+    steelGrad.addColorStop(0.45, '#AEB6BD');
+    steelGrad.addColorStop(0.55, '#8B939B');
+    steelGrad.addColorStop(1, '#5E656C');
+    ctx.fillStyle = steelGrad;
+    crRoundRect(ctx, panelX, panelY, panelW, panelH, 12);
+    ctx.fill();
+    ctx.restore();
+    ctx.textAlign = 'center';
+    ctx.font = '700 13px Arial';
+    ctx.save(); ctx.letterSpacing='2px';
+    ctx.fillStyle = '#4a4f54';
+    ctx.fillText('REG. NO.', panelX+panelW/2, panelY+26);
+    ctx.restore();
+    ctx.font = '800 30px Georgia, serif';
+    ctx.fillStyle = '#1b1f27';
+    ctx.fillText(data.regNo, panelX+panelW/2, panelY+58);
+
+    // ---------- Details column: Name / Role / Location / Mobile / Age category ----------
+    // Starts exactly at the photo ring's top edge, ends exactly at the reg panel's top edge —
+    // five rows, evenly spaced, every row the same big font size.
+    const detailX = 384, labelW = 210, valueX = detailX + labelW, detailRight = 1000;
+    const isPlus48Card = data.ageCategory === '48 Plus';
+    const rows = [
+      ['Name', data.name, '#F3EEDD'],
+      ['Role', data.role, '#F3EEDD'],
+      ['Location', data.location, '#F3EEDD'],
+      ['Mobile', data.mobile || '', '#F3EEDD'],
+      ['Age category', isPlus48Card ? '48 Plus' : 'Under 48', isPlus48Card ? '#FF8F89' : '#F3D576']
+    ];
+    const rowsTop = rRing ? (cy - rRing) : 245; // = 245, matches photo ring top
+    const rowsBottom = panelY; // = 612, matches reg panel top
+    const usableTop = rowsTop + 24, usableBottom = rowsBottom - 18;
+    const step = (usableBottom - usableTop) / (rows.length - 1);
+    ctx.textAlign = 'left';
+    rows.forEach(([label, value, color], i)=>{
+      const ry = usableTop + step*i;
+      ctx.font = '700 26px Georgia, serif';
+      ctx.fillStyle = '#D9B143';
+      ctx.fillText(label, detailX, ry);
+      ctx.fillStyle = color;
+      const valSize = crFitText(ctx, String(value), detailRight - valueX, 26, 17, '700', 'Georgia, serif');
+      ctx.font = `700 ${valSize}px Georgia, serif`;
+      ctx.fillText(String(value), valueX, ry);
+      ctx.strokeStyle = 'rgba(217,177,67,0.22)';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(detailX, ry+14); ctx.lineTo(detailRight, ry+14); ctx.stroke();
+    });
+
+    // ---------- QR code, bottom-right ----------
+    if(data.qrDataUrl){
+      try{
+        const qrImg = await new Promise((resolve, reject)=>{ const im = new Image(); im.onload=()=>resolve(im); im.onerror=reject; im.src = data.qrDataUrl; });
+        const qs = 108, qx = W-70-qs, qy = 686-qs;
+        ctx.fillStyle = '#F3EEDD';
+        crRoundRect(ctx, qx-8, qy-8, qs+16, qs+16, 8);
+        ctx.fill();
+        ctx.drawImage(qrImg, qx, qy, qs, qs);
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'rgba(243,238,221,0.7)';
+        ctx.font = '600 10px Arial';
+        ctx.save(); ctx.letterSpacing='1px'; ctx.fillText('SCAN TO VERIFY', qx+qs/2, qy+qs+26); ctx.restore();
+      }catch(e){
+        console.error('QR image failed to draw onto the card:', e);
+      }
+    } else {
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'rgba(243,238,221,0.5)';
+      ctx.font = '600 11px Arial';
+      ctx.fillText('QR unavailable', W-70-54, 686-54);
+    }
+
+    // ---------- Footer strip ----------
+    ctx.strokeStyle = 'rgba(217,177,67,0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, H-34); ctx.lineTo(W, H-34); ctx.stroke();
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(243,213,118,0.65)';
+    ctx.font = '600 12px Arial';
+    ctx.save(); ctx.letterSpacing='1px';
+    ctx.fillText('This card confirms eligibility for the player auction · Issued ' + new Date().toLocaleDateString(), W/2, H-14);
+    ctx.restore();
+
+    // Publish — wrapped in a try/catch because a cross-origin photo (from the ID-card
+    // lookup flow) can occasionally block reading the canvas back out as an image.
+    const preview = document.getElementById(targetIds.preview);
+    const dl = document.getElementById(targetIds.download);
+    const noteEl = targetIds.note ? document.getElementById(targetIds.note) : null;
+    let dataUrl = null;
+    try { dataUrl = canvas.toDataURL('image/png'); } catch(e) { dataUrl = null; }
+
+    if(dataUrl){
+      preview.src = dataUrl;
+      preview.style.display = 'block';
+      canvas.style.display = 'none';
+      dl.href = dataUrl;
+      dl.download = (data.name.trim().replace(/\s+/g,'_') || 'player') + '_ID_Card.png';
+      dl.style.display = 'inline-block';
+      dl.textContent = 'Download ID Card';
+      if(noteEl) noteEl.style.display = 'none';
+    } else {
+      // Fallback: still show the card (drawing on-screen always works), just can't offer
+      // a one-tap download — ask them to screenshot it instead.
+      preview.style.display = 'none';
+      canvas.style.display = 'block';
+      canvas.style.width = '100%';
+      canvas.style.borderRadius = '12px';
+      canvas.style.boxShadow = 'var(--shadow)';
+      dl.style.display = 'none';
+      if(noteEl){ noteEl.textContent = "Couldn't prepare a one-tap download — please take a screenshot of the card above to save it."; noteEl.style.display = 'block'; }
+    }
+    if(targetIds.area) document.getElementById(targetIds.area).style.display = 'block';
+  };
+
+  if(data.photoFile){
+    const img = new Image();
+    img.onload = () => draw(img);
+    img.src = URL.createObjectURL(data.photoFile);
+  } else if(data.photoUrl){
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => draw(img);
+    img.onerror = () => { alert('Could not load the photo for this ID card. Please try again.'); };
+    img.src = data.photoUrl;
+  } else {
+    draw(null); // live preview before a photo is uploaded — photo ring is drawn empty
+  }
+}
+
+function showIdLookup(){
+  document.getElementById('reg-form-wrap').style.display = 'none';
+  document.getElementById('reg-success').style.display = 'none';
+  document.getElementById('id-lookup-wrap').style.display = 'block';
+  document.getElementById('idLookupArea').style.display = 'none';
+  document.getElementById('lookupErr').style.display = 'none';
+}
+
+function hideIdLookup(){
+  document.getElementById('id-lookup-wrap').style.display = 'none';
+  document.getElementById('reg-form-wrap').style.display = '';
+}
+
+async function findMyIdCard(){
+  const mobile = document.getElementById('lookupMobile').value.trim();
+  const errBox = document.getElementById('lookupErr');
+  errBox.style.display = 'none';
+  if(!/^\d{10}$/.test(mobile)){
+    errBox.textContent = 'Enter a valid 10-digit mobile number.';
+    errBox.style.display = 'block';
+    return;
+  }
+  try{
+    const res = await fetch('/api/my-id-card?mobile=' + encodeURIComponent(mobile));
+    const data = await res.json();
+    if(!res.ok){
+      errBox.textContent = data.error || 'No registration found for that mobile number.';
+      errBox.style.display = 'block';
+      return;
+    }
+    generateIdCard(
+      { name: data.name, location: data.location, mobile: data.mobile, role: data.role, ageCategory: data.ageCategory, regNo: data.regNo, categorySerial: data.categorySerial, qrDataUrl: data.qrDataUrl, photoUrl: data.photo_url },
+      { canvas:'idLookupCanvas', preview:'idLookupPreview', download:'idLookupDownload', area:'idLookupArea', note:'idLookupNote' }
+    );
+  }catch(err){
+    errBox.textContent = 'Could not reach the server.';
+    errBox.style.display = 'block';
+  }
+}
+
+async function checkAdminPass(){
+  const val = document.getElementById('adminPass').value;
+  try{
+    const res = await fetch('/api/admin-login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({password: val}) });
+    const data = await res.json();
+    if(res.ok){
+      adminPassword = val;
+      isAdminUnlocked = true;
+      isSuperAdmin = data.role === 'superadmin';
+      document.getElementById('admin-lock').style.display='none';
+      document.getElementById('admin-panel').style.display='block';
+      const badge = document.getElementById('roleBadge');
+      badge.textContent = isSuperAdmin ? 'Super Admin' : 'Admin';
+      badge.style.background = isSuperAdmin ? 'var(--leather)' : '#8B87A6';
+      badge.style.color = '#fff';
+      badge.style.borderColor = isSuperAdmin ? 'var(--leather)' : '#8B87A6';
+      document.getElementById('superPassBtn').style.display = isSuperAdmin ? '' : 'none';
+      document.getElementById('regCapBox').style.display = isSuperAdmin ? 'block' : 'none';
+      if(isSuperAdmin) loadRegistrationCapStatus();
+      loadRoster();
+    } else {
+      document.getElementById('lockErr').style.display='block';
+    }
+  }catch(err){
+    document.getElementById('lockErr').textContent = 'Could not reach the server. Is it running?';
+    document.getElementById('lockErr').style.display='block';
+  }
+}
+
+async function loadRegistrationCapStatus(){
+  try{
+    const res = await fetch('/api/registration-status');
+    const data = await res.json();
+    const statusEl = document.getElementById('regCapStatus');
+    const btn = document.getElementById('regCapToggleBtn');
+    const capIn = document.getElementById('capInput'); if(capIn && document.activeElement !== capIn) capIn.value = data.cap;
+    if(data.forcedOpen){
+      statusEl.innerHTML = `<b style="color:var(--ok);">Registration is FORCED OPEN</b> — ${data.count}/${data.cap} registered. New registrations are being accepted past the normal cap.`;
+      btn.textContent = 'Restore Normal Cap (' + data.cap + ')';
+    } else if(data.count >= data.cap){
+      statusEl.innerHTML = `<b style="color:var(--err);">Registration is FULL</b> — ${data.count}/${data.cap} registered. The public form is now closed.`;
+      btn.textContent = 'Force Registration Open';
+    } else {
+      statusEl.innerHTML = `Registration is <b style="color:var(--ok);">open</b> — ${data.count}/${data.cap} registered.`;
+      btn.textContent = 'Force Registration Open';
+    }
+  }catch(err){
+    document.getElementById('regCapStatus').textContent = 'Could not load registration status.';
+  }
+}
+
+async function saveRegCap(){
+  const msg = document.getElementById('capMsg');
+  try{
+    const res = await fetch('/api/registration-cap', { method:'POST', headers:{'Content-Type':'application/json','x-admin-password':adminPassword}, body: JSON.stringify({cap: capInput.value}) });
+    const d = await res.json();
+    if(res.ok && d.success){ msg.style.color='var(--ok)'; msg.textContent='Saved ✓'; loadRegistrationCapStatus(); checkRegistrationStatus(); }
+    else { msg.style.color='var(--err)'; msg.textContent = d.error || 'Could not save.'; }
+  }catch(e){ msg.style.color='var(--err)'; msg.textContent='Could not reach the server.'; }
+}
+
+function fillBrandForm(){
+  const set = (id,v)=>{ const el=document.getElementById(id); if(el) el.value = v || ''; };
+  set('brL1', BRAND.line1); set('brL2', BRAND.line2); set('brPresenter', BRAND.presenter); set('brDate', BRAND.dateText);
+}
+async function saveBrand(){
+  const msg = document.getElementById('brMsg');
+  const body = { line1: brL1.value, line2: brL2.value, presenter: brPresenter.value, dateText: brDate.value };
+  try{
+    const r = await fetch('/api/branding', { method:'POST', headers:{'Content-Type':'application/json','x-admin-password':adminPassword}, body: JSON.stringify(body) });
+    const d = await r.json();
+    if(r.ok && d.success){ BRAND = d.brand; applyBrand(); fillBrandForm(); msg.style.color='var(--ok)'; msg.textContent='Saved ✓'; }
+    else { msg.style.color='var(--err)'; msg.textContent = d.error || 'Could not save.'; }
+  }catch(e){ msg.style.color='var(--err)'; msg.textContent='Could not reach the server.'; }
+}
+fillBrandForm();
+
+async function toggleRegistrationCap(){
+  try{
+    const statusRes = await fetch('/api/registration-status');
+    const status = await statusRes.json();
+    const newForcedOpen = !status.forcedOpen;
+    const res = await fetch('/api/registration-toggle', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', 'x-admin-password': adminPassword},
+      body: JSON.stringify({forcedOpen: newForcedOpen})
+    });
+    const data = await res.json();
+    if(res.ok && data.success){ loadRegistrationCapStatus(); }
+    else { alert(data.error || 'Could not update registration status.'); }
+  }catch(err){ alert('Could not reach the server.'); }
+}
+
+function togglePassBox(){
+  const box = document.getElementById('changePassBox');
+  box.style.display = (box.style.display === 'none') ? 'block' : 'none';
+}
+
+function toggleSuperPassBox(){
+  const box = document.getElementById('changeSuperPassBox');
+  box.style.display = (box.style.display === 'none') ? 'block' : 'none';
+}
+
+async function changeSuperAdminPassword(){
+  const newPass = document.getElementById('newSuperAdminPass').value;
+  const confirmPass = document.getElementById('confirmSuperAdminPass').value;
+  const msg = document.getElementById('superPassChangeMsg');
+  msg.style.color = 'var(--err)';
+  if(!newPass || newPass.length < 4){ msg.textContent = 'Password must be at least 4 characters.'; return; }
+  if(newPass !== confirmPass){ msg.textContent = 'Passwords do not match.'; return; }
+  try{
+    const res = await fetch('/api/change-superadmin-password', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', 'x-admin-password': adminPassword},
+      body: JSON.stringify({newPassword: newPass})
+    });
+    const data = await res.json();
+    if(res.ok && data.success){
+      adminPassword = newPass;
+      msg.style.color = 'var(--ok)';
+      msg.textContent = 'Super Admin password updated.';
+      document.getElementById('newSuperAdminPass').value = '';
+      document.getElementById('confirmSuperAdminPass').value = '';
+    } else {
+      msg.textContent = data.error || 'Could not update password.';
+    }
+  }catch(err){
+    msg.textContent = 'Could not reach the server.';
+  }
+}
+
+async function changeAdminPassword(){
+  const newPass = document.getElementById('newAdminPass').value;
+  const confirmPass = document.getElementById('confirmAdminPass').value;
+  const msg = document.getElementById('passChangeMsg');
+  msg.style.color = 'var(--err)';
+  if(!newPass || newPass.length < 4){ msg.textContent = 'Password must be at least 4 characters.'; return; }
+  if(newPass !== confirmPass){ msg.textContent = 'Passwords do not match.'; return; }
+  try{
+    const res = await fetch('/api/change-admin-password', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', 'x-admin-password': adminPassword},
+      body: JSON.stringify({newPassword: newPass})
+    });
+    const data = await res.json();
+    if(res.ok && data.success){
+      adminPassword = newPass;
+      msg.style.color = 'var(--ok)';
+      msg.textContent = 'Password updated. Use the new password next time you unlock this panel.';
+      document.getElementById('newAdminPass').value = '';
+      document.getElementById('confirmAdminPass').value = '';
+    } else {
+      msg.textContent = data.error || 'Could not update password.';
+    }
+  }catch(err){
+    msg.textContent = 'Could not reach the server.';
+  }
+}
+
+async function checkAuctionPass(){
+  const val = document.getElementById('auctionPass').value;
+  try{
+    const res = await fetch('/api/admin-login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({password: val}) });
+    if(res.ok){
+      adminPassword = val;
+      isAdminUnlocked = true;
+      document.getElementById('auction-lock').style.display='none';
+      document.getElementById('auction-panel').style.display='block';
+      // Owners must load first so the "Select owner…" dropdown is populated on first render.
+      await loadOwners();
+      await loadAuctionBoard();
+    } else {
+      document.getElementById('auctionLockErr').style.display='block';
+    }
+  }catch(err){
+    document.getElementById('auctionLockErr').textContent = 'Could not reach the server.';
+    document.getElementById('auctionLockErr').style.display='block';
+  }
+}
+
+async function loadTeams(){
+  const wrap = document.getElementById('teamsWrap');
+  wrap.innerHTML = '<div class="loading-row">Loading teams…</div>';
+  try{
+    const res = await fetch('/api/teams');
+    const teams = await res.json();
+    renderTeams(teams);
+  }catch(err){
+    wrap.innerHTML = '<div class="empty-state">Could not load teams.</div>';
+  }
+  loadUnsold();
+}
+
+async function loadUnsold(){
+  const wrap = document.getElementById('unsoldWrap');
+  try{
+    const res = await fetch('/api/unsold');
+    const list = await res.json();
+    document.getElementById('unsoldHeading').textContent = `Unsold Players (${list.length})`;
+    if(list.length === 0){ wrap.innerHTML = '<div class="empty-state">Every player has been sold.</div>'; return; }
+    wrap.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;">${list.map(p=>{
+      const is48 = p.age_category === '48 Plus';
+      return `<div class="panel" style="padding:10px 12px;display:flex;align-items:center;gap:10px;">
+        <img class="roster-photo" src="${p.photo_url}" style="width:38px;height:38px;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:${is48?'800':'600'};color:${is48?'#E11D48':'inherit'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(p.name)}${is48?' (48+)':''}</div>
+          <div style="font-size:11px;color:var(--ink-soft);">${escapeHtml(p.role)}</div>
+        </div>
+        <span class="role-pill" style="background:${p.status==='Unsold'?'#E58900':'var(--ok)'};color:#fff;font-size:10px;white-space:nowrap;">${p.status==='Unsold'?'Passed':'Available'}</span>
+      </div>`;}).join('')}</div>`;
+  }catch(err){ wrap.innerHTML = '<div class="empty-state">Could not load unsold players.</div>'; }
+}
+
+const PICK_TAG_COLORS = { 'Captain':'var(--gold)' };
+const PICK_TAG_INK = { 'Captain':'var(--pitch-deep)' };
+let lastLoadedTeams = []; // kept around so "Copy roster for WhatsApp" can build text without re-fetching
+
+function renderTeams(teams){
+  lastLoadedTeams = teams || [];
+  try{ renderTeamStats(teams); }catch(e){ console.error(e); }
+  const wrap = document.getElementById('teamsWrap');
+  const heading = document.getElementById('teamsHeading');
+  if(heading) heading.textContent = teams && teams.length ? `The ${teams.length} Team${teams.length===1?'':'s'}` : 'The Teams';
+  if(!teams || teams.length === 0){ wrap.innerHTML = '<div class="empty-state">No teams finalized yet.</div>'; return; }
+  const tagOrder = { 'Owner':0, 'Captain':1, 'Batsman Pick':2, 'Bowler Pick':3 };
+  wrap.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px;">
+    ${teams.map(t=>{
+      const teamName = t.team_name || t.name;
+      const club = teamColor(teamName);
+      const total = Number(t.budget_total), spent = Number(t.budget_spent);
+      const remaining = total - spent;
+      const spentPct = total > 0 ? Math.min(100, Math.max(0, (spent/total)*100)) : 0;
+      // Full squad — everyone bought for this team, core picks and live-auction buys alike.
+      // Falls back to just the core picks if an older /api/teams response has no "squad" field.
+      const fullSquad = (t.squad || t.core || []).slice().sort((a,b)=>(tagOrder[a.pick_tag]??9)-(tagOrder[b.pick_tag]??9) || a.name.localeCompare(b.name));
+      const ownerPick = fullSquad.find(p => p.pick_tag === 'Owner');
+      const restSquad = fullSquad.filter(p => p.pick_tag !== 'Owner');
+      const coreHtml = restSquad.length === 0
+        ? '<div class="txt" style="font-size:12.5px;padding-top:8px;">No players bought yet.</div>'
+        : restSquad.map(p => {
+            const isPlus48 = p.age_category === '48 Plus';
+            return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #EDE7D0;">
+            <img class="roster-photo" src="${p.photo_url}" style="width:30px;height:30px;">
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:13px;font-weight:${isPlus48?'800':'600'};color:${isPlus48?'#E11D48':'inherit'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(p.name)}${isPlus48?' (48+)':''}</div>
+              <div style="font-size:11px;color:var(--ink-soft);">${escapeHtml(p.role)}</div>
+              <div style="font-size:11px;color:var(--ink-soft);margin-top:1px;">${p.mobile ? `📞 <a href="tel:${escapeHtml(p.mobile)}" style="color:inherit;">${escapeHtml(p.mobile)}</a>` : ''}${p.location ? ` · 📍 ${escapeHtml(p.location)}` : ''}</div>
+            </div>
+            ${p.pick_tag ? `<span class="role-pill" style="background:${PICK_TAG_COLORS[p.pick_tag]||'#00C2A8'};color:${PICK_TAG_INK[p.pick_tag]||'#fff'};font-size:10px;white-space:nowrap;">${escapeHtml(p.pick_tag)}</span>` : `<span class="role-pill" style="background:#8B87A6;font-size:10px;white-space:nowrap;">₹${Number(p.sold_price||0).toLocaleString()}</span>`}
+          </div>`;
+          }).join('');
+      const ownerBadgeHtml = ownerPick
+        ? `<img class="roster-photo" src="${ownerPick.photo_url}" style="width:30px;height:30px;border:2px solid #fff;box-shadow:0 0 0 1px ${club.bg};position:absolute;bottom:-8px;right:-8px;">`
+        : '';
+      return `<div class="panel" style="padding:0;overflow:hidden;">
+        <div style="background:linear-gradient(135deg, ${club.bg} 0%, ${club.bg}dd 100%);padding:16px;position:relative;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="position:relative;flex-shrink:0;">
+              ${t.logo_url ? `<img src="${t.logo_url}" alt="${escapeHtml(teamName)} crest" style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid #fff;box-shadow:0 0 0 1px ${club.bg};display:block;">` : teamCrestSvg(teamName, 52)}
+              ${ownerBadgeHtml}
+            </div>
+            <div style="min-width:0;">
+              <div class="display" style="font-size:18px;font-weight:700;color:#fff;line-height:1.2;overflow-wrap:anywhere;">${escapeHtml(teamName)}</div>
+              <div style="font-size:12px;color:${club.trim};margin-top:2px;">Owner · ${escapeHtml(t.name)}</div>
+            </div>
+          </div>
+          <a href="/api/teams/${t.id}/pdf" download style="display:inline-block;margin-top:12px;padding:6px 12px;border-radius:8px;background:#fff;color:${club.bg};font-size:12px;font-weight:700;text-decoration:none;">📄 Download PDF</a>
+        </div>
+        <div style="padding:14px 16px 16px;">
+          <div class="mono" style="font-size:11px;color:var(--ink-soft);display:flex;justify-content:space-between;margin-bottom:5px;">
+            <span>Spent ₹${spent.toLocaleString()}</span>
+            <span style="color:${remaining<0?'var(--err)':'var(--ok)'};">Remaining ₹${remaining.toLocaleString()}</span>
+          </div>
+          <div style="height:7px;border-radius:999px;background:var(--paper-2);overflow:hidden;">
+            <div style="height:100%;width:${spentPct}%;background:${remaining<0?'var(--err)':club.bg};border-radius:999px;"></div>
+          </div>
+          <div class="mono" style="font-size:10.5px;color:var(--ink-soft);margin-top:4px;">Budget ₹${total.toLocaleString()}</div>
+          <div style="margin-top:6px;">${coreHtml}</div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// Builds a plain-text version of every team's full squad (WhatsApp-friendly: *bold* markup,
+// 48 Plus players flagged) and copies it to the clipboard, or falls back to a manual-copy
+// prompt if the clipboard API isn't available (e.g. non-HTTPS local network access).
+async function copyRosterAsText(){
+  if(!lastLoadedTeams || lastLoadedTeams.length === 0){ alert('No teams finalized yet.'); return; }
+  const tagOrder = { 'Owner':0, 'Captain':1, 'Batsman Pick':2, 'Bowler Pick':3 };
+  const lines = ['*' + brandTitle().toUpperCase() + '*', '_' + brandTitle() + ' — Final Team Rosters_', '_' + BRAND.presenter + (BRAND.dateText ? ' · ' + BRAND.dateText : '') + '_', ''];
+  lastLoadedTeams.forEach(t => {
+    const teamName = t.team_name || t.name;
+    const squad = (t.squad || t.core || []).slice().sort((a,b)=>(tagOrder[a.pick_tag]??9)-(tagOrder[b.pick_tag]??9) || a.name.localeCompare(b.name));
+    lines.push(`*${teamName.toUpperCase()}* (Owner: ${t.name})`);
+    if(squad.length === 0){
+      lines.push('  _No players yet_');
+    } else {
+      squad.forEach(p => {
+        const isPlus48 = p.age_category === '48 Plus';
+        const tagLabel = p.pick_tag ? ` [${p.pick_tag}]` : (p.sold_price ? ` (₹${Number(p.sold_price).toLocaleString()})` : '');
+        lines.push(`  • ${p.name} — ${p.role}${isPlus48 ? ' *(48+)*' : ''}${tagLabel}`);
+      });
+    }
+    lines.push('');
+  });
+  const text = lines.join('\n');
+  try{
+    await navigator.clipboard.writeText(text);
+    alert('Roster copied! Paste it straight into WhatsApp.');
+  }catch(err){
+    // Clipboard API can fail on non-HTTPS local network access — show the text so it can be copied manually.
+    prompt('Could not copy automatically. Select all and copy manually:', text);
+  }
+}
+
+async function loadOwners(){
+  try{
+    const res = await fetch('/api/owners', { headers:{'x-admin-password':adminPassword} });
+    owners = await res.json();
+    renderOwners();
+    populateOwnerMemberSelect();
+  }catch(err){ console.error('Could not load owners', err); }
+}
+
+// Fills the "Add Owner" dropdown with registered members who aren't already an owner.
+// Owners must come from the registration list — this is what keeps them from ever being
+// an outside/free-typed name.
+function populateOwnerMemberSelect(){
+  const sel = document.getElementById('ownerMemberSelect');
+  if(!sel) return;
+  const takenIds = new Set(owners.map(o => o.owner_player_id).filter(id => id !== null && id !== undefined));
+  const available = players.filter(p => !takenIds.has(p.id) && p.status !== 'Sold').slice().sort((a,b) => a.name.localeCompare(b.name));
+  const currentVal = sel.value;
+  sel.innerHTML = '<option value="">Select registered member…</option>' +
+    available.map(p => `<option value="${p.id}">${escapeHtml(p.name)} — ${escapeHtml(p.location)} (${escapeHtml(p.role)})</option>`).join('');
+  if(available.some(p => String(p.id) === currentVal)) sel.value = currentVal;
+}
+
+function renderOwners(){
+  const wrap = document.getElementById('ownersWrap');
+  if(owners.length === 0){ wrap.innerHTML = '<div class="empty-state">No owners added yet.</div>'; return; }
+  wrap.innerHTML = `<table class="roster">
+    <thead><tr><th>Crest</th><th>Team</th><th>Owner</th><th>Login</th><th>Budget</th><th>Spent</th><th>Remaining</th><th></th></tr></thead>
+    <tbody>${owners.map(o=>{
+      const remaining = Number(o.budget_total) - Number(o.budget_spent);
+      const crestImg = o.logo_url
+        ? `<img src="${o.logo_url}" style="width:34px;height:34px;border-radius:50%;object-fit:cover;display:block;">`
+        : teamCrestSvg(o.team_name || o.name, 34);
+      return `<tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:6px;">
+            ${crestImg}
+            <div>
+              <input type="file" accept="image/*" id="logoFile-${o.id}" style="display:none;" onchange="uploadTeamLogo(${o.id}, this)">
+              <button class="proof-link" onclick="document.getElementById('logoFile-${o.id}').click()">${o.logo_url ? 'Change' : 'Upload'}</button>
+              ${o.logo_url ? `<button class="proof-link" onclick="removeTeamLogo(${o.id})">Remove</button>` : ''}
+            </div>
+          </div>
+        </td>
+        <td>${escapeHtml(o.team_name || '—')} <button class="proof-link" onclick="editTeamName(${o.id})">Edit</button></td>
+        <td id="ownerCell-${o.id}">${escapeHtml(o.name)} <button class="proof-link" onclick="showChangeOwner(${o.id})">Change</button></td>
+        <td class="mono" style="font-size:12px;">${escapeHtml(o.login_username || '—')}</td>
+        <td class="mono">₹${Number(o.budget_total).toLocaleString()}</td>
+        <td class="mono">₹${Number(o.budget_spent).toLocaleString()}</td>
+        <td class="mono" style="color:${remaining < 0 ? 'var(--err)' : 'var(--ok)'};">₹${remaining.toLocaleString()}</td>
+        <td style="white-space:nowrap;">
+          <button class="proof-link" onclick="resetOwnerPassword(${o.id})">Reset Password</button>
+          &nbsp;·&nbsp;
+          <button class="proof-link" onclick="deleteOwner(${o.id})">Remove</button>
+        </td>
+      </tr>`;
+    }).join('')}</tbody></table>
+    <div style="margin-top:22px;">
+      <div class="txt" style="margin-bottom:8px;"><b>Captain pick</b> — assign each team's Captain directly, before the auction starts. This skips the live auction entirely. Fixed price: ₹10,000. Every other player (any role) goes through the live auction as usual.</div>
+      <table class="roster">
+        <thead><tr><th>Team</th><th>Captain</th></tr></thead>
+        <tbody>${owners.map(o=>renderCorePickRow(o)).join('')}</tbody>
+      </table>
+    </div>`;
+}
+
+async function uploadTeamLogo(id, inputEl){
+  const file = inputEl.files && inputEl.files[0];
+  if(!file) return;
+  const fd = new FormData();
+  fd.append('logo', file);
+  try{
+    const res = await fetch('/api/owners/' + id + '/logo', {
+      method:'POST',
+      headers:{'x-admin-password':adminPassword},
+      body: fd
+    });
+    const data = await res.json();
+    if(res.ok && data.success){ await loadOwners(); await loadTeams(); }
+    else { alert(data.error || 'Could not upload team logo.'); }
+  }catch(err){ alert('Could not reach the server.'); }
+  inputEl.value = '';
+}
+
+async function removeTeamLogo(id){
+  if(!confirm('Remove this team\'s custom crest and go back to the auto-generated one?')) return;
+  try{
+    const res = await fetch('/api/owners/' + id + '/logo', { method:'DELETE', headers:{'x-admin-password':adminPassword} });
+    const data = await res.json();
+    if(res.ok && data.success){ await loadOwners(); await loadTeams(); }
+    else { alert(data.error || 'Could not remove team logo.'); }
+  }catch(err){ alert('Could not reach the server.'); }
+}
+
+function renderCorePickRow(owner){
+  return `<tr>
+    <td>${escapeHtml(owner.team_name || owner.name)}</td>
+    <td>${corePickCell(owner, 'Captain', 10000)}</td>
+  </tr>`;
+}
+
+function corePickCell(owner, tag, price){
+  const existing = (players || []).find(p => p.owner_id === owner.id && p.pick_tag === tag);
+  if(existing){
+    return `<div>${escapeHtml(existing.name)} <span class="txt" style="font-size:11px;">(₹${price.toLocaleString()})</span><br><button class="proof-link" onclick="undoSell(${existing.id})">Undo</button></div>`;
+  }
+  // Any currently Available registered player is eligible to be picked as Captain directly —
+  // no role restriction, no "Retained" flag needed. Everyone else goes through the live auction.
+  const available = (players || [])
+    .filter(p => p.status !== 'Sold')
+    .slice().sort((a,b)=>a.name.localeCompare(b.name));
+  if(available.length === 0){
+    return `<span class="txt" style="font-size:12px;">No available players to assign as ${escapeHtml(tag)}.</span>`;
+  }
+  const options = available.map(p=>`<option value="${p.id}">${escapeHtml(p.name)} (${escapeHtml(p.role)})</option>`).join('');
+  const selId = `corePick-${owner.id}-${tag.replace(/\s+/g,'')}`;
+  return `<select id="${selId}" style="padding:6px;border-radius:6px;border:1px solid #DDD8EF;max-width:170px;">
+      <option value="">Select…</option>${options}
+    </select><br>
+    <button class="proof-link" onclick="assignCorePick(${owner.id}, '${tag}', ${price}, '${selId}')">Assign</button>`;
+}
+
+async function assignCorePick(ownerId, tag, price, selId){
+  const playerId = document.getElementById(selId).value;
+  if(!playerId){ alert('Select a member first.'); return; }
+  try{
+    const res = await fetch('/api/auction/sell', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-admin-password':adminPassword},
+      body: JSON.stringify({playerId: Number(playerId), ownerId, price, tag})
+    });
+    const data = await res.json();
+    if(res.ok && data.success){ await loadAuctionBoard(); await loadOwners(); }
+    else { alert(data.error || 'Could not assign.'); }
+  }catch(err){ alert('Could not reach the server.'); }
+}
+
+async function editTeamName(id){
+  const o = owners.find(x => x.id === id); if(!o) return;
+  const v = prompt('Enter the new team name:', o.team_name || '');
+  if(v === null) return;
+  const name = v.trim();
+  if(!name){ alert('Team name cannot be empty.'); return; }
+  try{
+    const res = await fetch('/api/owners/' + id, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json','x-admin-password':adminPassword},
+      body: JSON.stringify({teamName: name})
+    });
+    const data = await res.json();
+    if(res.ok && data.success){ await loadOwners(); await loadAuctionBoard(); }
+    else alert(data.error || 'Could not rename team.');
+  }catch(err){ alert('Could not reach the server.'); }
+}
+
+// Swaps the owner cell for a dropdown of every registered player who isn't sold or already an owner.
+function showChangeOwner(id){
+  const o = owners.find(x => x.id === id); if(!o) return;
+  const taken = new Set(owners.filter(x => x.id !== id).map(x => x.owner_player_id).filter(v => v !== null && v !== undefined));
+  const choices = players.filter(p => p.status !== 'Sold' && !taken.has(p.id)).slice().sort((a,b)=>a.name.localeCompare(b.name));
+  const cell = document.getElementById('ownerCell-' + id);
+  cell.innerHTML = `<select id="ownerPick-${id}" style="max-width:190px;padding:6px;border:1.5px solid #DDD8EF;border-radius:6px;font-size:12.5px;">
+      <option value="">Select new owner…</option>
+      ${choices.map(p => `<option value="${p.id}">${escapeHtml(p.name)} — ${escapeHtml(p.location)} (${escapeHtml(p.role)})</option>`).join('')}
+    </select>
+    <div style="margin-top:4px;">
+      <button class="proof-link" onclick="saveChangeOwner(${id})">Save</button> ·
+      <button class="proof-link" onclick="renderOwners()">Cancel</button>
+    </div>`;
+}
+
+async function saveChangeOwner(id){
+  const playerId = document.getElementById('ownerPick-' + id).value;
+  if(!playerId){ alert('Select a player first.'); return; }
+  const o = owners.find(x => x.id === id);
+  if(!confirm(`Change owner of "${o.team_name}"?\n\nThe current owner (${o.name}) goes back to the available players list.`)) return;
+  try{
+    const res = await fetch('/api/owners/' + id, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json','x-admin-password':adminPassword},
+      body: JSON.stringify({playerId: Number(playerId)})
+    });
+    const data = await res.json();
+    if(res.ok && data.success){
+      if(data.owner.generated_password){
+        alert(`Owner changed.\n\nNew login — Username: ${data.owner.login_username}  Password: ${data.owner.generated_password}\n(You can reset the password anytime.)`);
+      }
+      await loadAuctionBoard(); await loadOwners();
+    } else alert(data.error || 'Could not change owner.');
+  }catch(err){ alert('Could not reach the server.'); }
+}
+
+async function resetOwnerPassword(id){
+  const newPass = prompt('Enter a new login password for this owner (min 4 characters):');
+  if(newPass === null) return;
+  if(newPass.length < 4){ alert('Password must be at least 4 characters.'); return; }
+  try{
+    const res = await fetch('/api/owners/' + id + '/reset-password', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-admin-password':adminPassword},
+      body: JSON.stringify({password:newPass})
+    });
+    const data = await res.json();
+    if(res.ok && data.success){ alert('Password updated.'); }
+    else { alert(data.error || 'Could not reset password.'); }
+  }catch(err){ alert('Could not reach the server.'); }
+}
+
+async function addOwner(){
+  const playerId = document.getElementById('ownerMemberSelect').value;
+  const teamName = document.getElementById('ownerTeamName').value.trim();
+  const budget = document.getElementById('ownerBudget').value;
+  const msg = document.getElementById('ownerAddMsg');
+  msg.style.color = 'var(--err)';
+  if(!playerId){ msg.textContent = 'Select a registered member to make owner.'; return; }
+  if(!teamName){ msg.textContent = 'Enter a team name.'; return; }
+  if(budget === '' || isNaN(Number(budget))){ msg.textContent = 'Enter a valid starting budget.'; return; }
+  try{
+    const res = await fetch('/api/owners', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-admin-password':adminPassword},
+      body: JSON.stringify({playerId: Number(playerId), teamName, budget: Number(budget)})
+    });
+    const data = await res.json();
+    if(res.ok && data.success){
+      msg.style.color = 'var(--ok)';
+      const u = data.owner.login_username, p = data.owner.generated_password;
+      msg.innerHTML = `Owner added. Login for this owner — <b>Username: ${escapeHtml(u)}</b> · <b>Password: ${escapeHtml(p)}</b> (write this down now, it won't be shown again — reset it anytime from "Reset Password").`;
+      document.getElementById('ownerMemberSelect').value = '';
+      document.getElementById('ownerTeamName').value = '';
+      document.getElementById('ownerBudget').value = '';
+      await loadAuctionBoard();
+      await loadOwners();
+    } else {
+      msg.textContent = data.error || 'Could not add owner.';
+    }
+  }catch(err){ msg.textContent = 'Could not reach the server.'; }
+}
+
+async function deleteOwner(id){
+  if(!confirm('Remove this owner?')) return;
+  try{
+    const res = await fetch('/api/owners/' + id, { method:'DELETE', headers:{'x-admin-password':adminPassword} });
+    const data = await res.json();
+    if(res.ok && data.success){ loadOwners(); }
+    else { alert(data.error || 'Could not remove owner.'); }
+  }catch(err){ alert('Could not reach the server.'); }
+}
+
+async function loadAuctionBoard(){
+  document.getElementById('auctionBoardWrap').innerHTML = '<div class="loading-row">Loading auction board…</div>';
+  try{
+    const res = await fetch('/api/players', { headers:{'x-admin-password':adminPassword} });
+    players = await res.json();
+    renderAuctionBoard();
+  }catch(err){
+    document.getElementById('auctionBoardWrap').innerHTML = '<div class="empty-state">Could not load players.</div>';
+  }
+}
+
+function setAuctionFilter(f){
+  auctionFilter = f;
+  document.querySelectorAll('#view-auction .chip[data-afilter]').forEach(c=>c.classList.toggle('active', c.dataset.afilter===f));
+  renderAuctionBoard();
+}
+
+function renderAuctionBoard(){
+  const search = document.getElementById('auctionSearchBox').value.trim().toLowerCase();
+  // Owners and pre-picked Captain/Batsman/Bowler picks never went through the live auction,
+  // so they're managed from the Owners tab (Assign/Undo there) and stay out of this board
+  // entirely — unless they're undone, at which point they lose their pick_tag and reappear here.
+  let list = players.filter(p=>{
+    if(p.pick_tag) return false;
+    if(auctionFilter !== 'All' && p.status !== auctionFilter) return false;
+    if(search && !(p.name.toLowerCase().includes(search) || p.mobile.includes(search))) return false;
+    return true;
+  });
+  document.getElementById('auctionTotalCount').textContent = players.filter(p => !p.pick_tag).length;
+  renderAuctionStatRow();
+  const wrap = document.getElementById('auctionBoardWrap');
+  if(list.length === 0){ wrap.innerHTML = '<div class="empty-state">No players match this view.</div>'; return; }
+
+  const ownerOptions = owners.map(o=>`<option value="${o.id}">${escapeHtml(o.team_name || o.name)}</option>`).join('');
+
+  let rows = list.map(p=>{
+    const isPlus48 = p.age_category === '48 Plus';
+    const nameStyle = isPlus48 ? 'color:#E11D48;font-weight:700;' : '';
+    const plus48Tag = isPlus48 ? ' <span style="color:#E11D48;font-weight:700;">(48+)</span>' : '';
+    if(p.status === 'Sold'){
+      const tagBadge = p.pick_tag ? `<span class="role-pill" style="background:#00C2A8;font-size:10px;margin-left:6px;">${escapeHtml(p.pick_tag)}</span>` : '';
+      return `<tr>
+        <td class="mono">${String(p.id).padStart(3,'0')}</td>
+        <td><img class="roster-photo" src="${p.photo_url}"></td>
+        <td style="${nameStyle}">${escapeHtml(p.name)}${plus48Tag}</td>
+        <td><span class="role-pill" style="background:${roleColors[p.role]||'#8B87A6'}">${escapeHtml(p.role)}</span></td>
+        <td><span class="role-pill" style="background:var(--ok);">Sold</span>${tagBadge}</td>
+        <td>${escapeHtml(p.owner_team_name || p.owner_name || '')}</td>
+        <td class="mono">₹${Number(p.sold_price).toLocaleString()}</td>
+        <td><button class="proof-link" onclick="viewPlayerProfile(${p.id})">View</button> ${p.pick_tag === 'Owner' ? '' : `<button class="proof-link" onclick="undoSell(${p.id})">Undo</button>`}</td>
+      </tr>`;
+    }
+    const isUnsold = p.status === 'Unsold';
+    return `<tr>
+      <td class="mono">${String(p.id).padStart(3,'0')}</td>
+      <td><img class="roster-photo" src="${p.photo_url}"></td>
+      <td style="${nameStyle}">${escapeHtml(p.name)}${plus48Tag}</td>
+      <td><span class="role-pill" style="background:${roleColors[p.role]||'#8B87A6'}">${escapeHtml(p.role)}</span></td>
+      <td><span class="role-pill" style="background:${isUnsold ? 'var(--err)' : '#8B87A6'};">${escapeHtml(p.status)}</span></td>
+      <td colspan="2">
+        <select id="ownerSel-${p.id}" style="padding:6px;border-radius:6px;border:1px solid #DDD8EF;">
+          <option value="">Select owner…</option>${ownerOptions}
+        </select>
+        <input type="number" id="priceInp-${p.id}" placeholder="Price" style="width:90px;padding:6px;border-radius:6px;border:1px solid #DDD8EF;">
+      </td>
+      <td><button class="proof-link" onclick="viewPlayerProfile(${p.id})">View</button> <button class="proof-link" onclick="sellPlayer(${p.id})">Sell</button> <button class="proof-link" onclick="toggleUnsold(${p.id}, ${!isUnsold})">${isUnsold ? 'Mark Available' : 'Mark Unsold'}</button></td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `<table class="roster">
+    <thead><tr>
+      <th>#</th><th>Photo</th><th>Name</th><th>Role</th><th>Status</th><th>Owner</th><th>Price</th><th></th>
+    </tr></thead>
+    <tbody>${rows}</tbody></table>`;
+}
+
+async function toggleUnsold(playerId, unsold){
+  try{
+    const res = await fetch(`/api/players/${playerId}/unsold`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-admin-password':adminPassword},
+      body: JSON.stringify({unsold})
+    });
+    const data = await res.json();
+    if(res.ok && data.success){ await loadAuctionBoard(); }
+    else { alert(data.error || 'Could not update status.'); }
+  }catch(err){ alert('Could not reach the server.'); }
+}
+
+async function sellPlayer(playerId){
+  const ownerId = document.getElementById('ownerSel-' + playerId).value;
+  const price = document.getElementById('priceInp-' + playerId).value;
+  if(!ownerId){ alert('Select an owner first.'); return; }
+  if(price === '' || isNaN(Number(price)) || Number(price) < 0){ alert('Enter a valid price.'); return; }
+  try{
+    const res = await fetch('/api/auction/sell', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-admin-password':adminPassword},
+      body: JSON.stringify({playerId, ownerId, price: Number(price)})
+    });
+    const data = await res.json();
+    if(res.ok && data.success){ await loadAuctionBoard(); await loadOwners(); }
+    else { alert(data.error || 'Could not complete the sale.'); }
+  }catch(err){ alert('Could not reach the server.'); }
+}
+
+async function undoSell(playerId){
+  if(!confirm('Undo this sale and return the player to Available?')) return;
+  try{
+    const res = await fetch('/api/auction/undo', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-admin-password':adminPassword},
+      body: JSON.stringify({playerId})
+    });
+    const data = await res.json();
+    if(res.ok && data.success){ await loadAuctionBoard(); await loadOwners(); }
+    else { alert(data.error || 'Could not undo the sale.'); }
+  }catch(err){ alert('Could not reach the server.'); }
+}
+
+async function loadRoster(){
+  document.getElementById('rosterWrap').innerHTML = '<div class="loading-row">Loading roster…</div>';
+  try{
+    const res = await fetch('/api/players', { headers:{'x-admin-password':adminPassword} });
+    players = res.ok ? await res.json() : [];
+  }catch(err){ players = []; }
+  renderRoster();
+}
+
+async function toggleRetained(playerId, newValue){
+  try{
+    const res = await fetch('/api/players/' + playerId + '/retained', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-admin-password':adminPassword},
+      body: JSON.stringify({retained:newValue})
+    });
+    const data = await res.json();
+    if(res.ok && data.success){ await loadRoster(); }
+    else { alert(data.error || 'Could not update retained status.'); }
+  }catch(err){ alert('Could not reach the server.'); }
+}
+
+function setFilter(f){
+  activeFilter = f;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active', c.dataset.filter===f));
+  renderRoster();
+}
+
+// Clicking the "Age" column header cycles All → Under 48 → 48 Plus → All.
+// Clicking "Retained" cycles All → Yes → No → All. Same click-to-filter pattern as the
+// Role chips above, just on the table headers themselves.
+function cycleAgeFilter(){
+  const opts = ['All', 'Under 48', '48 Plus'];
+  ageFilter = opts[(opts.indexOf(ageFilter) + 1) % opts.length];
+  renderRoster();
+}
+function cycleRetainedFilter(){
+  const opts = ['All', 'Yes', 'No'];
+  retainedFilter = opts[(opts.indexOf(retainedFilter) + 1) % opts.length];
+  renderRoster();
+}
+
+function sortBy(key){
+  if(sortKey===key){ sortDir *= -1; } else { sortKey = key; sortDir = 1; }
+  renderRoster();
+}
+
+// Builds the colorful dashboard stat cards at the top of the Admin/Auction tabs.
+// Fetches the registration cap once (cached in `registrationCap`) so repeated
+// re-renders (e.g. after every sell/undo) don't hit the server again for it.
+async function ensureRegistrationCapLoaded(){
+  if(registrationCap !== null) return;
+  try{
+    const res = await fetch('/api/registration-status');
+    const data = await res.json();
+    registrationCap = data.cap;
+  }catch(err){ registrationCap = null; }
+}
+
+function statCardHtml(num, label, variant){
+  const cls = variant ? ` ${variant}` : '';
+  return `<div class="stat-card${cls}"><span class="snum">${num}</span><span class="slbl">${label}</span></div>`;
+}
+
+async function renderAdminStatRow(){
+  const el = document.getElementById('adminStatRow');
+  if(!el) return;
+  await ensureRegistrationCapLoaded();
+  const registered = players.length;
+  const slotsLeft = registrationCap !== null ? Math.max(0, registrationCap - registered) : '—';
+  const teams = owners.length;
+  const sold = players.filter(p=>p.status==='Sold').length;
+  el.innerHTML =
+    statCardHtml(registered, 'Registered') +
+    statCardHtml(slotsLeft, 'Slots left', slotsLeft===0 ? 'warn' : '') +
+    statCardHtml(teams, 'Teams') +
+    statCardHtml(sold, 'Players sold', 'ok2');
+}
+
+async function renderAuctionStatRow(){
+  const el = document.getElementById('auctionStatRow');
+  if(!el) return;
+  const total = players.length;
+  const sold = players.filter(p=>p.status==='Sold').length;
+  const unsold = players.filter(p=>p.status==='Unsold').length;
+  const teams = owners.length;
+  el.innerHTML =
+    statCardHtml(total, 'Total players') +
+    statCardHtml(sold, 'Sold', 'ok2') +
+    statCardHtml(unsold, 'Passed', unsold>0 ? 'warn' : '') +
+    statCardHtml(teams, 'Teams');
+}
+
+function renderRoster(){
+  const q = document.getElementById('searchBox').value.trim().toLowerCase();
+  let list = players.filter(p=>{
+    const matchesFilter = activeFilter==='All' || p.role===activeFilter;
+    const matchesAge = ageFilter==='All' || (p.age_category || 'Under 48')===ageFilter;
+    const matchesRetained = retainedFilter==='All' || (p.retained ? 'Yes' : 'No')===retainedFilter;
+    const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.mobile.includes(q);
+    return matchesFilter && matchesAge && matchesRetained && matchesSearch;
+  });
+  list.sort((a,b)=>{
+    let av = a[sortKey], bv = b[sortKey];
+    if(sortKey==='created_at'){ av=new Date(av); bv=new Date(bv); }
+    if(av<bv) return -1*sortDir;
+    if(av>bv) return 1*sortDir;
+    return 0;
+  });
+  document.getElementById('totalCount').textContent = players.length;
+  renderAdminStatRow();
+  const wrap = document.getElementById('rosterWrap');
+  const activeFilterCount = (activeFilter!=='All'?1:0) + (ageFilter!=='All'?1:0) + (retainedFilter!=='All'?1:0);
+  if(list.length===0){
+    wrap.innerHTML = `<div class="empty-state">No players match this view${activeFilterCount ? ' — try clearing a filter (Age/Retained headers, or the role chips above)' : ' yet'}.</div>`;
+    return;
+  }
+  let rows = list.map((p,i)=>{
+    const isPlus48 = (p.age_category || 'Under 48') === '48 Plus';
+    return `<tr>
+      <td class="mono">${escapeHtml(p.category_serial || String(i+1).padStart(3,'0'))}</td>
+      <td><img class="roster-photo" src="${p.photo_url}"></td>
+      <td style="${isPlus48 ? 'color:#E11D48;font-weight:700;' : ''}">${escapeHtml(p.name)}</td>
+      <td>${escapeHtml(p.location)}</td>
+      <td class="mono">${escapeHtml(p.mobile)}</td>
+      <td><span class="role-pill" style="background:${roleColors[p.role]||'#8B87A6'}">${escapeHtml(p.role)}</span></td>
+      <td style="font-size:12px;${isPlus48 ? 'color:#E11D48;font-weight:700;' : ''}">${escapeHtml(p.age_category || 'Under 48')}</td>
+      <td><button class="proof-link" onclick="toggleRetained(${p.id}, ${!p.retained})" style="color:${p.retained ? 'var(--ok)' : 'var(--ink-soft)'};font-weight:${p.retained ? '700' : '400'};">${p.retained ? 'Yes' : 'No'}</button></td>
+      <td><button class="proof-link" onclick="showModal('${p.proof_url}')">View</button></td>
+      <td class="mono" style="font-size:11.5px;">${new Date(p.created_at).toLocaleString()}</td>
+      ${isSuperAdmin ? `<td><button class="proof-link" onclick="openEditPlayer(${p.id})">Edit</button> <button class="proof-link" onclick="deletePlayer(${p.id})">Delete</button></td>` : ''}
+    </tr>`;
+  }).join('');
+  wrap.innerHTML = `<table class="roster">
+    <thead><tr>
+      <th onclick="sortBy('id')">#</th><th>Photo</th>
+      <th onclick="sortBy('name')">Name</th>
+      <th onclick="sortBy('location')">Location</th>
+      <th onclick="sortBy('mobile')">Mobile</th>
+      <th onclick="sortBy('role')">Role</th>
+      <th onclick="cycleAgeFilter()" title="Click to filter by age category">Age${ageFilter!=='All' ? ' 🔴 '+escapeHtml(ageFilter) : ' ▾'}</th>
+      <th onclick="cycleRetainedFilter()" title="Click to filter by retained status">Retained${retainedFilter!=='All' ? ' 🔴 '+escapeHtml(retainedFilter) : ' ▾'}</th>
+      <th>Payment Proof</th>
+      <th onclick="sortBy('created_at')">Registered</th>
+      ${isSuperAdmin ? '<th></th>' : ''}
+    </tr></thead>
+    <tbody>${rows}</tbody></table>`;
+}
+
+async function deletePlayer(playerId){
+  if(!isSuperAdmin){ alert('Only Super Admin can delete a registration.'); return; }
+  if(!confirm("Permanently delete this registration? This cannot be undone. If this player was already sold in the auction, the owner's budget will be refunded automatically.")) return;
+  try{
+    const res = await fetch('/api/players/' + playerId, { method:'DELETE', headers:{'x-admin-password':adminPassword} });
+    const data = await res.json();
+    if(res.ok && data.success){ loadRoster(); }
+    else { alert(data.error || 'Could not delete this registration.'); }
+  }catch(err){ alert('Could not reach the server.'); }
+}
+
+function openEditPlayer(playerId){
+  if(!isSuperAdmin){ alert('Only Super Admin can edit a registration.'); return; }
+  const p = players.find(pl=>pl.id===playerId);
+  if(!p) return;
+  document.getElementById('editPlayerId').value = p.id;
+  document.getElementById('editName').value = p.name;
+  document.getElementById('editLocation').value = p.location;
+  document.getElementById('editMobile').value = p.mobile;
+  document.getElementById('editRole').value = p.role;
+  document.getElementById('editAgeCategory').value = p.age_category || '48 Plus';
+  document.getElementById('editPhoto').value = '';
+  document.getElementById('editPhotoPreview').src = p.photo_url;
+  document.getElementById('editMsg').textContent = '';
+  document.getElementById('editPlayerOverlay').style.display = 'flex';
+}
+
+function closeEditPlayer(){
+  document.getElementById('editPlayerOverlay').style.display = 'none';
+}
+
+function previewEditPhoto(){
+  const fileInput = document.getElementById('editPhoto');
+  const file = fileInput.files && fileInput.files[0];
+  if(!file) return;
+  document.getElementById('editPhotoPreview').src = URL.createObjectURL(file);
+}
+
+async function saveEditPlayer(){
+  const id = document.getElementById('editPlayerId').value;
+  const name = document.getElementById('editName').value.trim();
+  const location = document.getElementById('editLocation').value.trim();
+  const mobile = document.getElementById('editMobile').value.trim();
+  const role = document.getElementById('editRole').value;
+  const ageCategory = document.getElementById('editAgeCategory').value;
+  const photoFile = document.getElementById('editPhoto').files[0];
+  const msg = document.getElementById('editMsg');
+  msg.style.color = 'var(--err)';
+  if(!name || !location || !/^\d{10}$/.test(mobile) || !role){
+    msg.textContent = 'Please fill every field with a valid 10-digit mobile number.';
+    return;
+  }
+  try{
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('location', location);
+    formData.append('mobile', mobile);
+    formData.append('role', role);
+    formData.append('ageCategory', ageCategory);
+    if(photoFile) formData.append('photo', photoFile);
+    const res = await fetch('/api/players/' + id, {
+      method:'PUT',
+      headers:{'x-admin-password':adminPassword},
+      body: formData
+    });
+    const data = await res.json();
+    if(res.ok && data.success){
+      closeEditPlayer();
+      loadRoster();
+    } else {
+      msg.textContent = data.error || 'Could not save changes.';
+    }
+  }catch(err){ msg.textContent = 'Could not reach the server.'; }
+}
+
+function showModal(proofUrl){
+  document.getElementById('modalImg').src = proofUrl;
+  document.getElementById('imgModal').classList.add('show');
+}
+
+function escapeHtml(str){ const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+
+// ---- Team crest generation: consistent monogram + club color per team name ----
+const CLUB_COLORS = [
+  { bg:'#7E2718', trim:'#E4CE9A' }, // leather deep / gold
+  { bg:'#163422', trim:'#C79A46' }, // pitch / gold
+  { bg:'#2C4A63', trim:'#E4CE9A' }, // wicketkeeper blue
+  { bg:'#7A5A2E', trim:'#F3EEDD' }, // all-rounder brown
+  { bg:'#4A1F44', trim:'#C79A46' }, // plum
+  { bg:'#1F4A3C', trim:'#E4CE9A' }, // deep teal-green
+  { bg:'#8C4A1E', trim:'#F3EEDD' }, // rust
+  { bg:'#2E2E38', trim:'#C79A46' }, // charcoal
+];
+function hashStr(str){
+  let h = 0;
+  for(let i=0;i<str.length;i++){ h = ((h<<5)-h) + str.charCodeAt(i); h |= 0; }
+  return Math.abs(h);
+}
+function teamMonogram(name){
+  if(!name) return '??';
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if(words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+  return words[0].slice(0,2).toUpperCase();
+}
+function teamColor(name){
+  const idx = hashStr(name || '') % CLUB_COLORS.length;
+  return CLUB_COLORS[idx];
+}
+function teamCrestSvg(name, size){
+  size = size || 56;
+  const c = teamColor(name);
+  const mono = teamMonogram(name);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 64 72" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;display:block;">
+    <path d="M32 2 L60 12 V34 C60 52 48 64 32 70 C16 64 4 52 4 34 V12 Z" fill="${c.bg}" stroke="${c.trim}" stroke-width="2.5"/>
+    <path d="M32 7 L55 15.5 V33.5 C55 48.5 45 58.5 32 64 C19 58.5 9 48.5 9 33.5 V15.5 Z" fill="none" stroke="${c.trim}" stroke-width="1" opacity="0.55"/>
+    <text x="32" y="41" text-anchor="middle" font-family="Fraunces, serif" font-weight="700" font-size="22" fill="${c.trim}">${escapeHtml(mono)}</text>
+  </svg>`;
+}
+
+function exportExcel(){
+  window.location.href = '/api/export?pw=' + encodeURIComponent(adminPassword);
+}
+
+function exportPdf(){
+  window.location.href = '/api/export-pdf?pw=' + encodeURIComponent(adminPassword);
+}
+
+// ---------- OWNER SELF-SERVICE ----------
+
+async function ownerLogin(){
+  const name = document.getElementById('ownerLoginName').value.trim();
+  const password = document.getElementById('ownerLoginPass').value;
+  const errBox = document.getElementById('ownerLockErr');
+  errBox.style.display = 'none';
+  if(!name || !password){ errBox.textContent = 'Enter your team name and password.'; errBox.style.display='block'; return; }
+  try{
+    const res = await fetch('/api/owner-login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({name, password})
+    });
+    const data = await res.json();
+    if(res.ok && data.success){
+      ownerName = name;
+      ownerPassword = password;
+      ownerInfo = data.owner;
+      document.getElementById('owner-lock').style.display = 'none';
+      document.getElementById('owner-panel').style.display = 'block';
+      document.getElementById('ownerWelcomeName').textContent = ownerInfo.team_name ? `${ownerInfo.team_name} (${ownerInfo.name})` : ownerInfo.name;
+      loadOwnerBoard();
+      if(ownerPollTimer) clearInterval(ownerPollTimer);
+      ownerPollTimer = setInterval(loadOwnerBoard, 4000);
+    } else {
+      errBox.textContent = data.error || 'Incorrect name or password.';
+      errBox.style.display = 'block';
+    }
+  }catch(err){
+    errBox.textContent = 'Could not reach the server.';
+    errBox.style.display = 'block';
+  }
+}
+
+function ownerLogout(){
+  ownerName = ''; ownerPassword = ''; ownerInfo = null; ownerBoard = [];
+  if(ownerPollTimer){ clearInterval(ownerPollTimer); ownerPollTimer = null; }
+  document.getElementById('owner-panel').style.display = 'none';
+  document.getElementById('owner-lock').style.display = 'block';
+  document.getElementById('ownerLoginPass').value = '';
+}
+
+function ownerHeaders(){
+  return { 'Content-Type':'application/json', 'x-owner-name': ownerName, 'x-owner-password': ownerPassword };
+}
+
+async function loadOwnerBoard(){
+  if(!ownerInfo) return;
+  try{
+    const [meRes, boardRes] = await Promise.all([
+      fetch('/api/owner/me', { headers: ownerHeaders() }),
+      fetch('/api/owner/board', { headers: ownerHeaders() })
+    ]);
+    if(meRes.status === 401 || boardRes.status === 401){ ownerLogout(); return; }
+    const newMe = await meRes.json();
+    const newBoard = await boardRes.json();
+    const changed = JSON.stringify(newMe) !== JSON.stringify(ownerInfo) || JSON.stringify(newBoard) !== JSON.stringify(ownerBoard);
+    ownerInfo = newMe;
+    ownerBoard = newBoard;
+    if(changed) renderOwnerBoard();
+  }catch(err){ console.error('Could not refresh owner board', err); }
+}
+
+function setOwnerFilter(f){
+  ownerFilter = f;
+  document.querySelectorAll('#view-owner .chip[data-ofilter]').forEach(c=>c.classList.toggle('active', c.dataset.ofilter===f));
+  renderOwnerBoard();
+}
+
+function renderOwnerBoard(){
+  if(!ownerInfo) return;
+  const remaining = Number(ownerInfo.budget_total) - Number(ownerInfo.budget_spent);
+  document.getElementById('ownerRemaining').textContent = '₹' + remaining.toLocaleString();
+  document.getElementById('ownerBudgetLine').textContent =
+    `Total budget ₹${Number(ownerInfo.budget_total).toLocaleString()} · Spent so far ₹${Number(ownerInfo.budget_spent).toLocaleString()}`;
+
+  // The board auto-refreshes every few seconds — remember whatever bid amounts are
+  // currently typed in, so a refresh doesn't wipe them out mid-entry.
+  const savedBids = {};
+  document.querySelectorAll('#ownerBoardWrap input[id^="ownerPriceInp-"]').forEach(inp=>{
+    if(inp.value !== '') savedBids[inp.id] = inp.value;
+  });
+  const focusedId = document.activeElement && document.activeElement.id;
+
+  const search = document.getElementById('ownerSearchBox').value.trim().toLowerCase();
+  let list = ownerBoard.filter(p=>{
+    if(ownerFilter !== 'All' && p.status !== ownerFilter) return false;
+    if(search && !p.name.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  const wrap = document.getElementById('ownerBoardWrap');
+  if(list.length === 0){ wrap.innerHTML = '<div class="empty-state">No players match this view.</div>'; return; }
+
+  let rows = list.map(p=>{
+    const isPlus48 = p.age_category === '48 Plus';
+    const nameStyle = isPlus48 ? 'color:#E11D48;font-weight:700;' : '';
+    const plus48Tag = isPlus48 ? ' <span style="color:#E11D48;font-weight:700;">(48+)</span>' : '';
+    if(p.status === 'Sold'){
+      const mine = p.owner_id === ownerInfo.id;
+      const tagBadge = p.pick_tag ? `<span class="role-pill" style="background:#00C2A8;font-size:10px;margin-left:6px;">${escapeHtml(p.pick_tag)}</span>` : '';
+      return `<tr>
+        <td class="mono">${String(p.id).padStart(3,'0')}</td>
+        <td><img class="roster-photo" src="${p.photo_url}"></td>
+        <td style="${nameStyle}">${escapeHtml(p.name)}${plus48Tag}${mine ? ' <span style="color:var(--ok);font-size:11px;">(your player)</span>' : ''}</td>
+        <td><span class="role-pill" style="background:${roleColors[p.role]||'#8B87A6'}">${escapeHtml(p.role)}</span></td>
+        <td><span class="role-pill" style="background:var(--ok);">Sold</span>${tagBadge}</td>
+        <td>${escapeHtml(p.owner_team_name || p.owner_name || '')}</td>
+        <td class="mono">₹${Number(p.sold_price).toLocaleString()}</td>
+        <td><button class="proof-link" onclick="viewPlayerProfile(${p.id})">View</button></td>
+      </tr>`;
+    }
+    return `<tr>
+      <td class="mono">${String(p.id).padStart(3,'0')}</td>
+      <td><img class="roster-photo" src="${p.photo_url}"></td>
+      <td style="${nameStyle}">${escapeHtml(p.name)}${plus48Tag}</td>
+      <td><span class="role-pill" style="background:${roleColors[p.role]||'#8B87A6'}">${escapeHtml(p.role)}</span></td>
+      <td><span class="role-pill" style="background:${p.status === 'Unsold' ? 'var(--err)' : '#8B87A6'};">${escapeHtml(p.status)}</span></td>
+      <td colspan="2">
+        <input type="number" id="ownerPriceInp-${p.id}" placeholder="Your bid" style="width:100px;padding:6px;border-radius:6px;border:1px solid #DDD8EF;">
+        <button class="btn-outline" style="padding:6px 12px;font-size:12px;" onclick="buyAsOwner(${p.id})">Buy</button>
+      </td>
+      <td><button class="proof-link" onclick="viewPlayerProfile(${p.id})">View</button></td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `<table class="roster">
+    <thead><tr><th>#</th><th>Photo</th><th>Name</th><th>Role</th><th>Status</th><th>Owner</th><th>Price</th><th></th></tr></thead>
+    <tbody>${rows}</tbody></table>`;
+
+  // Restore any bid amounts (and cursor focus) that were in progress before this refresh
+  Object.keys(savedBids).forEach(id=>{
+    const inp = document.getElementById(id);
+    if(inp) inp.value = savedBids[id];
+  });
+  if(focusedId && focusedId.startsWith('ownerPriceInp-')){
+    const inp = document.getElementById(focusedId);
+    if(inp){ inp.focus(); const v = inp.value; inp.value=''; inp.value=v; }
+  }
+}
+
+async function buyAsOwner(playerId){
+  const inp = document.getElementById('ownerPriceInp-' + playerId);
+  const price = inp.value;
+  if(price === '' || isNaN(Number(price)) || Number(price) < 0){ alert('Enter a valid bid amount.'); return; }
+  if(!confirm(`Buy this player for ₹${Number(price).toLocaleString()}?`)) return;
+  try{
+    const res = await fetch('/api/owner/buy', {
+      method:'POST', headers: ownerHeaders(),
+      body: JSON.stringify({ playerId, price: Number(price) })
+    });
+    const data = await res.json();
+    if(res.ok && data.success){
+      loadOwnerBoard();
+    } else {
+      alert(data.error || 'Could not complete the purchase.');
+      loadOwnerBoard(); // someone else may have just bought this player — refresh to show it
+    }
+  }catch(err){ alert('Could not reach the server.'); }
+}
+
+// Full-screen player profile — used on auction day so whoever's running the auction
+// can pull up a large, clear view of "who's up now" (works well on a projector too).
+function showPlayerProfile(player){
+  document.getElementById('ppPhoto').src = player.photo_url;
+  document.getElementById('ppRegNo').textContent = 'REG. NO. ' + String(player.id).padStart(3,'0');
+  document.getElementById('ppName').textContent = player.name;
+  const roleEl = document.getElementById('ppRole');
+  roleEl.textContent = player.role;
+  roleEl.style.background = roleColors[player.role] || '#8B87A6';
+  roleEl.style.color = '#F3EEDD';
+  document.getElementById('ppLocText').textContent = player.location;
+  document.getElementById('playerProfileOverlay').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closePlayerProfile(){
+  document.getElementById('playerProfileOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// Looks a player up by id in whichever board array is currently loaded (admin's
+// auction board or an owner's board) and opens the full-screen profile for them.
+function viewPlayerProfile(playerId){
+  const fromAdmin = players.find(p => p.id === playerId);
+  const fromOwner = (typeof ownerBoard !== 'undefined') ? ownerBoard.find(p => p.id === playerId) : null;
+  const player = fromAdmin || fromOwner;
+  if(player) showPlayerProfile(player);
+}
+
+loadQR();
+updatePreview();
+checkRegistrationStatus();
+
+async function checkRegistrationStatus(){
+  try{
+    const res = await fetch('/api/registration-status');
+    const data = await res.json();
+    if(!data.open){
+      document.getElementById('reg-form-wrap').style.display = 'none';
+      document.getElementById('reg-full-wrap').style.display = 'block';
+      document.getElementById('regFullMsg').textContent =
+        `We've reached our registration limit (${data.count}/${data.cap} players) for this season. If you still need to register, please contact the admin.`;
+    } else {
+      document.getElementById('reg-form-wrap').style.display = '';
+      document.getElementById('reg-full-wrap').style.display = 'none';
+    }
+    const sl = document.getElementById('regSlots');
+    if(sl){
+      const left = Math.max(0, data.cap - data.count);
+      sl.innerHTML = data.open
+        ? `<b>${data.count}/${data.cap}</b> players registered · <b>${left}</b> slot${left===1?'':'s'} left`
+        : '';
+    }
+  }catch(err){ console.error('Could not check registration status', err); }
+}
+</script>
+
+<div id="stage">
+  <canvas id="confetti"></canvas>
+  <div class="st-top"><img src="/konkantech-logo.jpg" alt=""><div><div class="t1" id="stT1">BORLI PREMIER LEAGUE SEASON 2</div><div class="t2" id="stT2">Player Auction · Sidra and Devansh Sports</div></div><div class="live">LIVE</div></div>
+  <div class="st-main">
+    <div class="st-center" id="stCenter"></div>
+    <div class="st-side"><h4>Team Purses</h4><div id="stTeams"></div><h4 style="margin-top:18px;">Pool</h4><div id="stPool" style="font-size:13px;color:#e8dcae;"></div></div>
+  </div>
+  <div class="st-ctl">
+    <button class="st-btn gold" onclick="stageNext()">⏭ Next Player</button>
+    <select id="stOwner"></select>
+    <input type="number" id="stPrice" placeholder="Sold price ₹" min="0" onkeydown="if(event.key==='Enter')stageSell()">
+    <button class="st-btn gold" onclick="stageSell()">🔨 SOLD</button>
+    <button class="st-btn red" onclick="stageUnsold()">Unsold</button>
+    <button class="st-btn" id="stSoundBtn" onclick="stageToggleSound()">🔊 Sound on</button>
+    <button class="st-btn x" onclick="closeStage()">✕ Close</button>
+  </div>
+  <div id="soldOverlay" onclick="hideSold()"></div>
+</div>
+<script>
+/* ===== Sponsors ticker (add more sponsors here: logo files go in /public; logo is optional) ===== */
+function buildTicker(){
+  const SPONSORS = [
+    { name: BRAND.presenter, logo:'', tag:'Presents' },
+    { name:'KonkanTech', logo:'/konkantech-logo.jpg', tag:'Made by' }
+  ];
+  const items = [];
+  SPONSORS.forEach(sp=>{
+    items.push(`<span class="ticker-item">${sp.logo ? `<img src="${sp.logo}" alt="">` : ''}<b>${escapeHtml(sp.name)}</b> · ${escapeHtml(sp.tag||'Sponsor')}</span>`);
+    items.push('<span class="ticker-item"><i>✦</i></span>');
+  });
+  items.push(`<span class="ticker-item">${escapeHtml(brandTitle())}${BRAND.dateText ? ' · ' + escapeHtml(BRAND.dateText) : ''}</span><span class="ticker-item"><i>✦</i></span>`);
+  items.push('<span class="ticker-item">Play · Compete · Celebrate</span><span class="ticker-item"><i>✦</i></span>');
+  const half = items.join('').repeat(3);
+  document.getElementById('tickerTrack').innerHTML = half + half;
+}
+buildTicker();
+applyBrand();
+
+/* ===== Event info + countdown ===== */
+let _ev = {}, _evTimer = null;
+async function loadEventInfo(){
+  try{
+    const r = await fetch('/api/event-info'); _ev = await r.json() || {};
+    const set = (id,v)=>{ const el=document.getElementById(id); if(el) el.value = v || ''; };
+    set('evLabel', _ev.label); set('evAt', _ev.auctionAt); set('evVenue', _ev.venue); set('evNote', _ev.note);
+    renderEvent();
+  }catch(e){}
+}
+function renderEvent(){
+  const strip = document.getElementById('eventStrip');
+  if(_evTimer){ clearInterval(_evTimer); _evTimer = null; }
+  if(!_ev || (!_ev.auctionAt && !_ev.venue && !_ev.note)){ strip.classList.remove('show'); return; }
+  strip.classList.add('show');
+  const when = _ev.auctionAt ? new Date(_ev.auctionAt) : null;
+  const okDate = when && !isNaN(when.getTime());
+  document.getElementById('evMeta').innerHTML =
+    `<b>${escapeHtml(_ev.label || 'Event')}</b>` +
+    (okDate ? `${when.toLocaleString([], {dateStyle:'medium', timeStyle:'short'})}` : '') +
+    (_ev.venue ? `<br>📍 ${escapeHtml(_ev.venue)}` : '') + (_ev.note ? `<br>${escapeHtml(_ev.note)}` : '');
+  const box = document.getElementById('cdBox');
+  if(!okDate){ box.innerHTML = ''; return; }
+  const tick = ()=>{
+    let d = when.getTime() - Date.now();
+    if(d <= 0){ box.innerHTML = '<div style="min-width:120px"><b>LIVE</b><small>started</small></div>'; return; }
+    const D = Math.floor(d/864e5), H = Math.floor(d%864e5/36e5), M = Math.floor(d%36e5/6e4), S = Math.floor(d%6e4/1e3);
+    box.innerHTML = [[D,'days'],[H,'hrs'],[M,'min'],[S,'sec']].map(([v,l])=>`<div><b>${String(v).padStart(2,'0')}</b><small>${l}</small></div>`).join('');
+  };
+  tick(); _evTimer = setInterval(tick, 1000);
+}
+async function saveEventInfo(){
+  const msg = document.getElementById('evMsg');
+  const body = { label:evLabel.value.trim(), auctionAt:evAt.value, venue:evVenue.value.trim(), note:evNote.value.trim() };
+  try{
+    const r = await fetch('/api/event-info', { method:'POST', headers:{'Content-Type':'application/json','x-admin-password':adminPassword}, body:JSON.stringify(body) });
+    const d = await r.json();
+    if(r.ok && d.success){ msg.style.color='var(--ok)'; msg.textContent='Saved ✓'; _ev = body; renderEvent(); }
+    else { msg.style.color='var(--err)'; msg.textContent = d.error || 'Could not save.'; }
+  }catch(e){ msg.style.color='var(--err)'; msg.textContent='Could not reach the server.'; }
+}
+loadEventInfo();
+
+/* ===== Public team stats (Teams tab) ===== */
+function renderTeamStats(teams){
+  const box = document.getElementById('teamsStats'); if(!box) return;
+  if(!teams || !teams.length){ box.innerHTML=''; return; }
+  const bought = [];
+  teams.forEach(t=>(t.squad||[]).forEach(p=>{
+    if(p.pick_tag !== 'Owner' && Number(p.sold_price) > 0) bought.push({...p, team:t.team_name||t.name});
+  }));
+  const spentAll = teams.reduce((a,t)=>a+Number(t.budget_spent||0),0);
+  const top = bought.slice().sort((a,b)=>Number(b.sold_price)-Number(a.sold_price))[0];
+  const inr = n => '₹' + Number(n).toLocaleString('en-IN');
+  const maxSpent = Math.max(1, ...teams.map(t=>Number(t.budget_spent||0)));
+  box.innerHTML = `<div class="tstats">
+    <div class="tstat"><small>Most expensive buy</small><b>${top ? escapeHtml(top.name) : '—'}</b><span>${top ? inr(top.sold_price)+' · '+escapeHtml(top.team) : 'No sales yet'}</span></div>
+    <div class="tstat"><small>Players sold</small><b>${bought.length}</b><span>across ${teams.length} team${teams.length===1?'':'s'}</span></div>
+    <div class="tstat"><small>Total spent</small><b>${inr(spentAll)}</b><span>${bought.length ? 'avg '+inr(Math.round(spentAll/bought.length))+' per buy' : ''}</span></div>
+  </div>
+  <div class="tboard"><h3>Team spending leaderboard</h3>${
+    teams.slice().sort((a,b)=>Number(b.budget_spent||0)-Number(a.budget_spent||0)).map(t=>{
+      const sp = Number(t.budget_spent||0), rem = Number(t.budget_total||0) - sp;
+      return `<div class="tb-row"><span><b>${escapeHtml(t.team_name||t.name)}</b></span><div class="tb-bar"><i style="width:${(sp/maxSpent*100).toFixed(1)}%"></i></div><span class="mono" style="font-size:12px;text-align:right;">${inr(sp)}<br><small style="color:var(--ink-soft)">${inr(rem)} left</small></span></div>`;
+    }).join('')}</div>`;
+}
+
+/* ===== Live Stage (projector mode) ===== */
+let stCur = null, stSound = true, stUnsoldRound = false, stBusy = false;
+const stInr = n => '₹' + Number(n||0).toLocaleString('en-IN');
+async function openStage(){
+  await loadOwners(); await loadAuctionBoard();
+  document.getElementById('stage').classList.add('show');
+  try{ const el = document.documentElement; if(el.requestFullscreen && !document.fullscreenElement) el.requestFullscreen(); }catch(e){}
+  stFillOwners(); stSide();
+  if(stCur){ const f = players.find(p=>p.id===stCur.id); if(f && f.status !== 'Sold') { stCur = f; return stShow(); } }
+  stageNext();
+}
+async function closeStage(){
+  hideSold(true);
+  document.getElementById('stage').classList.remove('show');
+  try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){}
+  await loadAuctionBoard(); await loadOwners();
+}
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && document.getElementById('stage').classList.contains('show') && !document.fullscreenElement) closeStage(); });
+function stFillOwners(){
+  const sel = document.getElementById('stOwner'), keep = sel.value;
+  sel.innerHTML = '<option value="">Select team…</option>' + owners.map(o=>{
+    const rem = Number(o.budget_total||0) - Number(o.budget_spent||0);
+    return `<option value="${o.id}">${escapeHtml(o.team_name||o.name)} — ${stInr(rem)} left</option>`;
+  }).join('');
+  sel.value = keep;
+}
+function stSide(){
+  document.getElementById('stTeams').innerHTML = owners.map(o=>{
+    const tot = Number(o.budget_total||0), sp = Number(o.budget_spent||0), rem = tot - sp;
+    return `<div class="st-team"><div class="n"><span>${escapeHtml(o.team_name||o.name)}</span><b>${stInr(rem)}</b></div><div class="bar"><i style="width:${tot>0?Math.min(100,sp/tot*100):0}%"></i></div></div>`;
+  }).join('') || '<div style="color:#bfae74;font-size:13px;">No teams yet.</div>';
+  const pool = players.filter(p=>!p.pick_tag);
+  const c = s => pool.filter(p=>p.status===s).length;
+  document.getElementById('stPool').innerHTML = `Available: <b style="color:#F3D576">${c('Available')}</b><br>Unsold: <b style="color:#F3D576">${c('Unsold')}</b><br>Sold: <b style="color:#F3D576">${c('Sold')}</b>`;
+}
+function stageNext(){
+  const pool = players.filter(p=>!p.pick_tag);
+  let list = pool.filter(p=>p.status==='Available'); stUnsoldRound = false;
+  if(!list.length){ list = pool.filter(p=>p.status==='Unsold'); stUnsoldRound = list.length > 0; }
+  if(!list.length){
+    stCur = null;
+    document.getElementById('stCenter').innerHTML = '<div class="st-empty">🏆 Auction complete!<br><span style="font-size:.5em;color:#e8dcae;">All players have been assigned.</span></div>';
+    return;
+  }
+  stCur = list[Math.floor(Math.random()*list.length)];
+  stShow();
+}
+function stShow(){
+  const p = stCur; if(!p) return;
+  const plus = p.age_category === '48 Plus';
+  document.getElementById('stCenter').innerHTML = `
+    <img class="st-photo" src="${p.photo_url}" alt="">
+    <div class="st-info">
+      <div class="reg">${stUnsoldRound ? 'UNSOLD ROUND · ' : 'NOW ON THE BLOCK · '}#${String(p.id).padStart(3,'0')}</div>
+      <h2>${escapeHtml(p.name)}</h2>
+      <span class="pill">${escapeHtml(p.role)}</span>${plus ? '<span class="pill" style="background:#ff6b6b;">48 Plus</span>' : ''}
+      <p>📍 ${escapeHtml(p.location || '')}</p>
+    </div>`;
+  document.getElementById('stPrice').value = '';
+  document.getElementById('stPrice').focus();
+}
+async function stageSell(){
+  if(!stCur || stBusy) return;
+  const ownerId = document.getElementById('stOwner').value, price = document.getElementById('stPrice').value;
+  if(!ownerId){ alert('Select the buying team first.'); return; }
+  if(price === '' || isNaN(Number(price)) || Number(price) < 0){ alert('Enter a valid sold price.'); return; }
+  const o = owners.find(x=>String(x.id)===String(ownerId));
+  const rem = Number(o.budget_total||0) - Number(o.budget_spent||0);
+  if(Number(price) > rem && !confirm(`${o.team_name||o.name} only has ${stInr(rem)} left. Sell anyway?`)) return;
+  stBusy = true;
+  try{
+    const res = await fetch('/api/auction/sell', { method:'POST', headers:{'Content-Type':'application/json','x-admin-password':adminPassword}, body:JSON.stringify({playerId:stCur.id, ownerId:Number(ownerId), price:Number(price)}) });
+    const d = await res.json();
+    if(!(res.ok && d.success)){ alert(d.error || 'Could not complete the sale.'); stBusy = false; return; }
+    const sold = stCur; stCur = null;
+    await loadAuctionBoard(); await loadOwners(); stFillOwners(); stSide();
+    showSold(sold, o, Number(price));
+  }catch(e){ alert('Could not reach the server.'); }
+  stBusy = false;
+}
+async function stageUnsold(){
+  if(!stCur || stBusy) return;
+  if(stUnsoldRound){ stageNext(); return; }   // already unsold: just move on
+  try{
+    const res = await fetch(`/api/players/${stCur.id}/unsold`, { method:'POST', headers:{'Content-Type':'application/json','x-admin-password':adminPassword}, body:JSON.stringify({unsold:true}) });
+    const d = await res.json();
+    if(res.ok && d.success){ await loadAuctionBoard(); stSide(); stSnd('unsold'); stageNext(); }
+    else alert(d.error || 'Could not update status.');
+  }catch(e){ alert('Could not reach the server.'); }
+}
+let _soldTimer = null;
+function showSold(p, o, price){
+  const ov = document.getElementById('soldOverlay');
+  ov.innerHTML = `<div class="big">SOLD!</div><div class="who">${escapeHtml(p.name)}</div><div class="to">to ${escapeHtml(o.team_name||o.name)}</div>${o.logo_url ? `<img class="tl" src="${o.logo_url}" alt="">` : ''}<div class="amt">${stInr(price)}</div>`;
+  ov.classList.add('show'); stSnd('sold'); stConfetti();
+  clearTimeout(_soldTimer); _soldTimer = setTimeout(()=>hideSold(), 7000);
+}
+function hideSold(silent){
+  const ov = document.getElementById('soldOverlay');
+  if(!ov.classList.contains('show')) return;
+  ov.classList.remove('show'); clearTimeout(_soldTimer); _confOn = false;
+  if(!silent) stageNext();
+}
+function stageToggleSound(){ stSound = !stSound; document.getElementById('stSoundBtn').textContent = stSound ? '🔊 Sound on' : '🔇 Sound off'; }
+function stSnd(kind){
+  if(!stSound) return;
+  try{
+    const C = new (window.AudioContext||window.webkitAudioContext)(), t = C.currentTime;
+    const tone = (f,s,d,type,v)=>{ const o=C.createOscillator(), g=C.createGain(); o.type=type; o.frequency.value=f; g.gain.setValueAtTime(v,t+s); g.gain.exponentialRampToValueAtTime(.001,t+s+d); o.connect(g); g.connect(C.destination); o.start(t+s); o.stop(t+s+d); };
+    if(kind==='sold'){ tone(110,0,.18,'square',.3); tone(110,.28,.18,'square',.3); [523,659,784,1047].forEach((f,i)=>tone(f,.6+i*.12,.6,'triangle',.22)); }
+    else { tone(220,0,.3,'sawtooth',.15); tone(165,.25,.5,'sawtooth',.15); }
+  }catch(e){}
+}
+let _confOn = false;
+function stConfetti(){
+  const cv = document.getElementById('confetti'), ctx = cv.getContext('2d');
+  cv.width = innerWidth; cv.height = innerHeight; _confOn = true;
+  const cols = ['#F7E08A','#D4AF37','#9C7410','#ffffff','#F3D576'];
+  const ps = Array.from({length:170}, ()=>({x:Math.random()*cv.width, y:-Math.random()*cv.height*.6, w:6+Math.random()*8, h:10+Math.random()*10, vy:2+Math.random()*4, vx:-1.5+Math.random()*3, r:Math.random()*6, vr:-.2+Math.random()*.4, c:cols[Math.floor(Math.random()*cols.length)]}));
+  (function frame(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    if(!_confOn) return;
+    ps.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; if(p.y>cv.height){ p.y=-20; p.x=Math.random()*cv.width; } ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r); ctx.fillStyle=p.c; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore(); });
+    requestAnimationFrame(frame);
+  })();
+}
+</script>
+<div id="editPlayerOverlay" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(14,36,23,0.7);align-items:center;justify-content:center;">
+  <div class="panel" style="max-width:420px;width:90%;background:var(--paper);">
+    <h2 class="display" style="margin-bottom:4px;">Edit Registration</h2>
+    <p class="sub">Super Admin only. Fix a typo or wrong detail below.</p>
+    <input type="hidden" id="editPlayerId">
+    <div style="margin-top:14px;display:flex;align-items:center;gap:14px;">
+      <img id="editPhotoPreview" src="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:1.5px solid #DDD8EF;">
+      <div>
+        <label style="font-size:12px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:4px;">Player Photo</label>
+        <input type="file" id="editPhoto" accept="image/*" onchange="previewEditPhoto()" style="font-size:12.5px;">
+      </div>
+    </div>
+    <div style="margin-top:14px;">
+      <label style="font-size:12px;font-weight:600;color:var(--ink-soft);">Name</label>
+      <input type="text" id="editName" style="width:100%;padding:10px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:14px;margin-top:4px;">
+    </div>
+    <div style="margin-top:12px;">
+      <label style="font-size:12px;font-weight:600;color:var(--ink-soft);">Location</label>
+      <input type="text" id="editLocation" style="width:100%;padding:10px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:14px;margin-top:4px;">
+    </div>
+    <div style="margin-top:12px;">
+      <label style="font-size:12px;font-weight:600;color:var(--ink-soft);">Mobile</label>
+      <input type="tel" id="editMobile" maxlength="10" style="width:100%;padding:10px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:14px;margin-top:4px;">
+    </div>
+    <div style="margin-top:12px;">
+      <label style="font-size:12px;font-weight:600;color:var(--ink-soft);">Role</label>
+      <select id="editRole" style="width:100%;padding:10px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:14px;margin-top:4px;background:var(--paper);">
+        <option value="Batsman">Batsman</option>
+        <option value="Bowler">Bowler</option>
+        <option value="All-Rounder">All-Rounder</option>
+        <option value="Wicket Keeper">Wicket Keeper</option>
+      </select>
+    </div>
+    <div style="margin-top:12px;">
+      <label style="font-size:12px;font-weight:600;color:var(--ink-soft);">Age Category</label>
+      <select id="editAgeCategory" style="width:100%;padding:10px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:14px;margin-top:4px;background:var(--paper);">
+        <option value="48 Plus">48 Plus</option>
+        <option value="Under 48">Under 48</option>
+      </select>
+    </div>
+    <div id="editMsg" style="font-size:12.5px;margin-top:10px;min-height:16px;"></div>
+    <div style="margin-top:16px;display:flex;gap:10px;">
+      <button class="submit-btn" style="margin-top:0;" onclick="saveEditPlayer()">Save Changes</button>
+      <button class="btn-outline" onclick="closeEditPlayer()">Cancel</button>
+    </div>
+  </div>
+</div>
+<div id="playerProfileOverlay" style="display:none;position:fixed;inset:0;z-index:999;background:var(--pitch-deep);">
+  <button onclick="closePlayerProfile()" style="position:absolute;top:22px;right:26px;background:none;border:1.5px solid rgba(243,238,221,0.4);color:var(--paper);font-size:15px;padding:8px 18px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;">✕ Close</button>
+  <div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;">
+    <img id="ppPhoto" style="width:min(46vh,340px);height:min(46vh,340px);object-fit:cover;border-radius:50%;border:6px solid #C79A46;box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+    <div id="ppRegNo" class="mono" style="color:rgba(243,238,221,0.6);font-size:20px;margin-top:22px;letter-spacing:2px;"></div>
+    <div id="ppName" class="display" style="color:var(--paper);font-size:clamp(32px,6vw,64px);font-weight:700;margin-top:8px;"></div>
+    <div id="ppRole" style="margin-top:16px;font-size:20px;font-weight:700;color:#1B3D28;padding:8px 24px;border-radius:20px;"></div>
+    <div id="ppLoc" style="margin-top:20px;font-size:22px;color:rgba(243,238,221,0.85);">📍 <span id="ppLocText"></span></div>
+  </div>
+</div>
+</body>
+</html>
