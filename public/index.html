@@ -334,8 +334,8 @@
             <div class="field" id="f-age">
               <label>Age Category</label>
               <div class="role-grid" id="ageGrid">
-                <div class="role-card" data-age="48 Plus"><span class="ic">🎂</span><span class="lbl">48 Plus</span></div>
-                <div class="role-card selected" data-age="Under 48"><span class="ic">🎂</span><span class="lbl">Under 48</span></div>
+                <div class="role-card" data-age="40 Plus"><span class="ic">🎂</span><span class="lbl">40 Plus</span></div>
+                <div class="role-card selected" data-age="Under 40"><span class="ic">🎂</span><span class="lbl">Under 40</span></div>
               </div>
               <div class="err-msg">Please select your age category.</div>
             </div>
@@ -559,7 +559,7 @@
     <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;margin-bottom:4px;">
       <div>
         <h2 class="display" style="margin-bottom:4px;" id="teamsHeading">The Teams</h2>
-        <p class="sub" style="margin:0;">Each team's full squad — bought in the auction or pre-assigned as a core pick. <span style="color:#E11D48;font-weight:700;">48 Plus</span> players are shown in bold red.</p>
+        <p class="sub" style="margin:0;">Each team's full squad — bought in the auction or pre-assigned as a core pick. <span style="color:#E11D48;font-weight:700;">40 Plus</span> players are shown in bold red.</p>
       </div>
       <button class="btn-outline" onclick="copyRosterAsText()">📋 Copy roster for WhatsApp</button>
     </div>
@@ -569,7 +569,7 @@
     <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;margin:34px 0 10px;">
       <div>
         <h2 class="display" style="margin-bottom:4px;" id="unsoldHeading">Unsold Players</h2>
-        <p class="sub" style="margin:0;">Players not sold to any team yet. <span style="color:#E11D48;font-weight:700;">48 Plus</span> players are shown in bold red.</p>
+        <p class="sub" style="margin:0;">Players not sold to any team yet. <span style="color:#E11D48;font-weight:700;">40 Plus</span> players are shown in bold red.</p>
       </div>
       <a class="btn-outline" href="/api/unsold/pdf" download style="text-decoration:none;">📄 Unsold list PDF</a>
     </div>
@@ -600,9 +600,9 @@ function applyBrand(){
   if(typeof buildTicker === 'function') buildTicker();
 }
 const roleColors = { "Batsman":"#FF5A36", "Bowler":"#5B21B6", "All-Rounder":"#F59E0B", "Wicket Keeper":"#0EA5E9" };
-// Age category defaults to "Under 48" (pre-selected on the form) — only "48 Plus" players
+// Age category defaults to "Under 40" (pre-selected on the form) — only "40 Plus" players
 // need to actively tap the other card. Makes filtering later much easier since it's never blank.
-let selectedRole = null, selectedAge = 'Under 48', photoFile = null, proofFile = null;
+let selectedRole = null, selectedAge = 'Under 40', photoFile = null, proofFile = null;
 let players = [], activeFilter = "All", ageFilter = "All", retainedFilter = "All", sortKey = "id", sortDir = -1, adminPassword = "";
 let registrationCap = null; // fetched once and reused to compute "slots left" on the dashboard stat cards
 let isAdminUnlocked = false;
@@ -805,9 +805,9 @@ document.getElementById('regForm').addEventListener('submit', async (e)=>{
 
 function resetForm(){
   document.getElementById('regForm').reset();
-  selectedRole = null; selectedAge = 'Under 48'; photoFile = null; proofFile = null;
+  selectedRole = null; selectedAge = 'Under 40'; photoFile = null; proofFile = null;
   document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
-  const defaultAgeCard = document.querySelector('#ageGrid .role-card[data-age="Under 48"]');
+  const defaultAgeCard = document.querySelector('#ageGrid .role-card[data-age="Under 40"]');
   if(defaultAgeCard) defaultAgeCard.classList.add('selected');
   document.getElementById('photoPreview').style.display='none';
   document.getElementById('photoTxt').innerHTML = '<b>Tap to upload</b><br>JPG or PNG, up to 2MB';
@@ -1121,13 +1121,13 @@ function generateIdCard(data, targetIds){
     // Starts exactly at the photo ring's top edge, ends exactly at the reg panel's top edge —
     // five rows, evenly spaced, every row the same big font size.
     const detailX = 384, labelW = 210, valueX = detailX + labelW, detailRight = 1000;
-    const isPlus48Card = data.ageCategory === '48 Plus';
+    const isPlus40Card = data.ageCategory === '40 Plus';
     const rows = [
       ['Name', data.name, '#F3EEDD'],
       ['Role', data.role, '#F3EEDD'],
       ['Location', data.location, '#F3EEDD'],
       ['Mobile', data.mobile || '', '#F3EEDD'],
-      ['Age category', isPlus48Card ? '48 Plus' : 'Under 48', isPlus48Card ? '#FF8F89' : '#F3D576']
+      ['Age category', isPlus40Card ? '40 Plus' : 'Under 40', isPlus40Card ? '#FF8F89' : '#F3D576']
     ];
     const rowsTop = rRing ? (cy - rRing) : 245; // = 245, matches photo ring top
     const rowsBottom = panelY; // = 612, matches reg panel top
@@ -1469,11 +1469,11 @@ async function loadUnsold(){
     document.getElementById('unsoldHeading').textContent = `Unsold Players (${list.length})`;
     if(list.length === 0){ wrap.innerHTML = '<div class="empty-state">Every player has been sold.</div>'; return; }
     wrap.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;">${list.map(p=>{
-      const is48 = p.age_category === '48 Plus';
+      const is40 = p.age_category === '40 Plus';
       return `<div class="panel" style="padding:10px 12px;display:flex;align-items:center;gap:10px;">
         <img class="roster-photo" src="${p.photo_url}" style="width:38px;height:38px;">
         <div style="flex:1;min-width:0;">
-          <div style="font-size:13px;font-weight:${is48?'800':'600'};color:${is48?'#E11D48':'inherit'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(p.name)}${is48?' (48+)':''}</div>
+          <div style="font-size:13px;font-weight:${is40?'800':'600'};color:${is40?'#E11D48':'inherit'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(p.name)}${is40?' (40+)':''}</div>
           <div style="font-size:11px;color:var(--ink-soft);">${escapeHtml(p.role)}</div>
         </div>
         <span class="role-pill" style="background:${p.status==='Unsold'?'#E58900':'var(--ok)'};color:#fff;font-size:10px;white-space:nowrap;">${p.status==='Unsold'?'Passed':'Available'}</span>
@@ -1508,11 +1508,11 @@ function renderTeams(teams){
       const coreHtml = restSquad.length === 0
         ? '<div class="txt" style="font-size:12.5px;padding-top:8px;">No players bought yet.</div>'
         : restSquad.map(p => {
-            const isPlus48 = p.age_category === '48 Plus';
+            const isPlus40 = p.age_category === '40 Plus';
             return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #EDE7D0;">
             <img class="roster-photo" src="${p.photo_url}" style="width:30px;height:30px;">
             <div style="flex:1;min-width:0;">
-              <div style="font-size:13px;font-weight:${isPlus48?'800':'600'};color:${isPlus48?'#E11D48':'inherit'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(p.name)}${isPlus48?' (48+)':''}</div>
+              <div style="font-size:13px;font-weight:${isPlus40?'800':'600'};color:${isPlus40?'#E11D48':'inherit'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(p.name)}${isPlus40?' (40+)':''}</div>
               <div style="font-size:11px;color:var(--ink-soft);">${escapeHtml(p.role)}</div>
               <div style="font-size:11px;color:var(--ink-soft);margin-top:1px;">${p.mobile ? `📞 <a href="tel:${escapeHtml(p.mobile)}" style="color:inherit;">${escapeHtml(p.mobile)}</a>` : ''}${p.location ? ` · 📍 ${escapeHtml(p.location)}` : ''}</div>
             </div>
@@ -1553,7 +1553,7 @@ function renderTeams(teams){
 }
 
 // Builds a plain-text version of every team's full squad (WhatsApp-friendly: *bold* markup,
-// 48 Plus players flagged) and copies it to the clipboard, or falls back to a manual-copy
+// 40 Plus players flagged) and copies it to the clipboard, or falls back to a manual-copy
 // prompt if the clipboard API isn't available (e.g. non-HTTPS local network access).
 async function copyRosterAsText(){
   if(!lastLoadedTeams || lastLoadedTeams.length === 0){ alert('No teams finalized yet.'); return; }
@@ -1567,9 +1567,9 @@ async function copyRosterAsText(){
       lines.push('  _No players yet_');
     } else {
       squad.forEach(p => {
-        const isPlus48 = p.age_category === '48 Plus';
+        const isPlus40 = p.age_category === '40 Plus';
         const tagLabel = p.pick_tag ? ` [${p.pick_tag}]` : (p.sold_price ? ` (₹${Number(p.sold_price).toLocaleString()})` : '');
-        lines.push(`  • ${p.name} — ${p.role}${isPlus48 ? ' *(48+)*' : ''}${tagLabel}`);
+        lines.push(`  • ${p.name} — ${p.role}${isPlus40 ? ' *(40+)*' : ''}${tagLabel}`);
       });
     }
     lines.push('');
@@ -1869,15 +1869,15 @@ function renderAuctionBoard(){
   const ownerOptions = owners.map(o=>`<option value="${o.id}">${escapeHtml(o.team_name || o.name)}</option>`).join('');
 
   let rows = list.map(p=>{
-    const isPlus48 = p.age_category === '48 Plus';
-    const nameStyle = isPlus48 ? 'color:#E11D48;font-weight:700;' : '';
-    const plus48Tag = isPlus48 ? ' <span style="color:#E11D48;font-weight:700;">(48+)</span>' : '';
+    const isPlus40 = p.age_category === '40 Plus';
+    const nameStyle = isPlus40 ? 'color:#E11D48;font-weight:700;' : '';
+    const plus40Tag = isPlus40 ? ' <span style="color:#E11D48;font-weight:700;">(40+)</span>' : '';
     if(p.status === 'Sold'){
       const tagBadge = p.pick_tag ? `<span class="role-pill" style="background:#00C2A8;font-size:10px;margin-left:6px;">${escapeHtml(p.pick_tag)}</span>` : '';
       return `<tr>
         <td class="mono">${String(p.id).padStart(3,'0')}</td>
         <td><img class="roster-photo" src="${p.photo_url}"></td>
-        <td style="${nameStyle}">${escapeHtml(p.name)}${plus48Tag}</td>
+        <td style="${nameStyle}">${escapeHtml(p.name)}${plus40Tag}</td>
         <td><span class="role-pill" style="background:${roleColors[p.role]||'#8B87A6'}">${escapeHtml(p.role)}</span></td>
         <td><span class="role-pill" style="background:var(--ok);">Sold</span>${tagBadge}</td>
         <td>${escapeHtml(p.owner_team_name || p.owner_name || '')}</td>
@@ -1889,7 +1889,7 @@ function renderAuctionBoard(){
     return `<tr>
       <td class="mono">${String(p.id).padStart(3,'0')}</td>
       <td><img class="roster-photo" src="${p.photo_url}"></td>
-      <td style="${nameStyle}">${escapeHtml(p.name)}${plus48Tag}</td>
+      <td style="${nameStyle}">${escapeHtml(p.name)}${plus40Tag}</td>
       <td><span class="role-pill" style="background:${roleColors[p.role]||'#8B87A6'}">${escapeHtml(p.role)}</span></td>
       <td><span class="role-pill" style="background:${isUnsold ? 'var(--err)' : '#8B87A6'};">${escapeHtml(p.status)}</span></td>
       <td colspan="2">
@@ -1981,11 +1981,11 @@ function setFilter(f){
   renderRoster();
 }
 
-// Clicking the "Age" column header cycles All → Under 48 → 48 Plus → All.
+// Clicking the "Age" column header cycles All → Under 40 → 40 Plus → All.
 // Clicking "Retained" cycles All → Yes → No → All. Same click-to-filter pattern as the
 // Role chips above, just on the table headers themselves.
 function cycleAgeFilter(){
-  const opts = ['All', 'Under 48', '48 Plus'];
+  const opts = ['All', 'Under 40', '40 Plus'];
   ageFilter = opts[(opts.indexOf(ageFilter) + 1) % opts.length];
   renderRoster();
 }
@@ -2050,7 +2050,7 @@ function renderRoster(){
   const q = document.getElementById('searchBox').value.trim().toLowerCase();
   let list = players.filter(p=>{
     const matchesFilter = activeFilter==='All' || p.role===activeFilter;
-    const matchesAge = ageFilter==='All' || (p.age_category || 'Under 48')===ageFilter;
+    const matchesAge = ageFilter==='All' || (p.age_category || 'Under 40')===ageFilter;
     const matchesRetained = retainedFilter==='All' || (p.retained ? 'Yes' : 'No')===retainedFilter;
     const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.mobile.includes(q);
     return matchesFilter && matchesAge && matchesRetained && matchesSearch;
@@ -2071,15 +2071,15 @@ function renderRoster(){
     return;
   }
   let rows = list.map((p,i)=>{
-    const isPlus48 = (p.age_category || 'Under 48') === '48 Plus';
+    const isPlus40 = (p.age_category || 'Under 40') === '40 Plus';
     return `<tr>
       <td class="mono">${escapeHtml(p.category_serial || String(i+1).padStart(3,'0'))}</td>
       <td><img class="roster-photo" src="${p.photo_url}"></td>
-      <td style="${isPlus48 ? 'color:#E11D48;font-weight:700;' : ''}">${escapeHtml(p.name)}</td>
+      <td style="${isPlus40 ? 'color:#E11D48;font-weight:700;' : ''}">${escapeHtml(p.name)}</td>
       <td>${escapeHtml(p.location)}</td>
       <td class="mono">${escapeHtml(p.mobile)}</td>
       <td><span class="role-pill" style="background:${roleColors[p.role]||'#8B87A6'}">${escapeHtml(p.role)}</span></td>
-      <td style="font-size:12px;${isPlus48 ? 'color:#E11D48;font-weight:700;' : ''}">${escapeHtml(p.age_category || 'Under 48')}</td>
+      <td style="font-size:12px;${isPlus40 ? 'color:#E11D48;font-weight:700;' : ''}">${escapeHtml(p.age_category || 'Under 40')}</td>
       <td><button class="proof-link" onclick="toggleRetained(${p.id}, ${!p.retained})" style="color:${p.retained ? 'var(--ok)' : 'var(--ink-soft)'};font-weight:${p.retained ? '700' : '400'};">${p.retained ? 'Yes' : 'No'}</button></td>
       <td><button class="proof-link" onclick="showModal('${p.proof_url}')">View</button></td>
       <td class="mono" style="font-size:11.5px;">${new Date(p.created_at).toLocaleString()}</td>
@@ -2122,7 +2122,7 @@ function openEditPlayer(playerId){
   document.getElementById('editLocation').value = p.location;
   document.getElementById('editMobile').value = p.mobile;
   document.getElementById('editRole').value = p.role;
-  document.getElementById('editAgeCategory').value = p.age_category || '48 Plus';
+  document.getElementById('editAgeCategory').value = p.age_category || '40 Plus';
   document.getElementById('editPhoto').value = '';
   document.getElementById('editPhotoPreview').src = p.photo_url;
   document.getElementById('editMsg').textContent = '';
@@ -2324,16 +2324,16 @@ function renderOwnerBoard(){
   if(list.length === 0){ wrap.innerHTML = '<div class="empty-state">No players match this view.</div>'; return; }
 
   let rows = list.map(p=>{
-    const isPlus48 = p.age_category === '48 Plus';
-    const nameStyle = isPlus48 ? 'color:#E11D48;font-weight:700;' : '';
-    const plus48Tag = isPlus48 ? ' <span style="color:#E11D48;font-weight:700;">(48+)</span>' : '';
+    const isPlus40 = p.age_category === '40 Plus';
+    const nameStyle = isPlus40 ? 'color:#E11D48;font-weight:700;' : '';
+    const plus40Tag = isPlus40 ? ' <span style="color:#E11D48;font-weight:700;">(40+)</span>' : '';
     if(p.status === 'Sold'){
       const mine = p.owner_id === ownerInfo.id;
       const tagBadge = p.pick_tag ? `<span class="role-pill" style="background:#00C2A8;font-size:10px;margin-left:6px;">${escapeHtml(p.pick_tag)}</span>` : '';
       return `<tr>
         <td class="mono">${String(p.id).padStart(3,'0')}</td>
         <td><img class="roster-photo" src="${p.photo_url}"></td>
-        <td style="${nameStyle}">${escapeHtml(p.name)}${plus48Tag}${mine ? ' <span style="color:var(--ok);font-size:11px;">(your player)</span>' : ''}</td>
+        <td style="${nameStyle}">${escapeHtml(p.name)}${plus40Tag}${mine ? ' <span style="color:var(--ok);font-size:11px;">(your player)</span>' : ''}</td>
         <td><span class="role-pill" style="background:${roleColors[p.role]||'#8B87A6'}">${escapeHtml(p.role)}</span></td>
         <td><span class="role-pill" style="background:var(--ok);">Sold</span>${tagBadge}</td>
         <td>${escapeHtml(p.owner_team_name || p.owner_name || '')}</td>
@@ -2344,7 +2344,7 @@ function renderOwnerBoard(){
     return `<tr>
       <td class="mono">${String(p.id).padStart(3,'0')}</td>
       <td><img class="roster-photo" src="${p.photo_url}"></td>
-      <td style="${nameStyle}">${escapeHtml(p.name)}${plus48Tag}</td>
+      <td style="${nameStyle}">${escapeHtml(p.name)}${plus40Tag}</td>
       <td><span class="role-pill" style="background:${roleColors[p.role]||'#8B87A6'}">${escapeHtml(p.role)}</span></td>
       <td><span class="role-pill" style="background:${p.status === 'Unsold' ? 'var(--err)' : '#8B87A6'};">${escapeHtml(p.status)}</span></td>
       <td colspan="2">
@@ -2601,13 +2601,13 @@ function stageNext(){
 }
 function stShow(){
   const p = stCur; if(!p) return;
-  const plus = p.age_category === '48 Plus';
+  const plus = p.age_category === '40 Plus';
   document.getElementById('stCenter').innerHTML = `
     <img class="st-photo" src="${p.photo_url}" alt="">
     <div class="st-info">
       <div class="reg">${stUnsoldRound ? 'UNSOLD ROUND · ' : 'NOW ON THE BLOCK · '}#${String(p.id).padStart(3,'0')}</div>
       <h2>${escapeHtml(p.name)}</h2>
-      <span class="pill">${escapeHtml(p.role)}</span>${plus ? '<span class="pill" style="background:#ff6b6b;">48 Plus</span>' : ''}
+      <span class="pill">${escapeHtml(p.role)}</span>${plus ? '<span class="pill" style="background:#ff6b6b;">40 Plus</span>' : ''}
       <p>📍 ${escapeHtml(p.location || '')}</p>
     </div>`;
   document.getElementById('stPrice').value = '';
@@ -2715,8 +2715,8 @@ function stConfetti(){
     <div style="margin-top:12px;">
       <label style="font-size:12px;font-weight:600;color:var(--ink-soft);">Age Category</label>
       <select id="editAgeCategory" style="width:100%;padding:10px;border:1.5px solid #DDD8EF;border-radius:8px;font-size:14px;margin-top:4px;background:var(--paper);">
-        <option value="48 Plus">48 Plus</option>
-        <option value="Under 48">Under 48</option>
+        <option value="40 Plus">40 Plus</option>
+        <option value="Under 40">Under 40</option>
       </select>
     </div>
     <div id="editMsg" style="font-size:12.5px;margin-top:10px;min-height:16px;"></div>

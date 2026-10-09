@@ -211,7 +211,7 @@ async function renderTeamPdf(doc, { owner, squad, photos, logoBuf, brand }) {
     doc.moveTo(M, y + ROW_H).lineTo(M + UW, y + ROW_H).lineWidth(0.4).strokeColor(theme.tintStrong).stroke();
 
     const mid = y + ROW_H / 2;
-    const is48 = p.age_category === '48 Plus';
+    const is40 = p.age_category === '40 Plus';
     const tag = p.pick_tag || '';
 
     // #
@@ -224,7 +224,7 @@ async function renderTeamPdf(doc, { owner, squad, photos, logoBuf, brand }) {
       catch (e) { doc.restore(); doc.circle(pcx, mid, pr).fill('#DDD'); }
     } else { doc.circle(pcx, mid, pr).fill('#DDD'); }
     // name
-    fitText(p.name + (is48 ? '  (48+)' : ''), cols[2].x + 8, mid - 7, cols[2].w - 12, 'Helvetica-Bold', 11.5, is48 ? '#CC0000' : '#1A1A1A');
+    fitText(p.name + (is40 ? '  (40+)' : ''), cols[2].x + 8, mid - 7, cols[2].w - 12, 'Helvetica-Bold', 11.5, is40 ? '#CC0000' : '#1A1A1A');
     // role, mobile, location
     fitText(p.role || '-', cols[3].x + 8, mid - 5.5, cols[3].w - 12, 'Helvetica', 10, '#333');
     fitText(p.mobile || '-', cols[4].x + 8, mid - 5.5, cols[4].w - 12, 'Helvetica', 10.5, '#333');

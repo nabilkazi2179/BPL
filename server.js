@@ -79,18 +79,18 @@ async function getRegCap() {
   return DEFAULT_REGISTRATION_CAP;
 }
 
-// Age category defaults to "Under 48" whenever it's missing/invalid — only "48 Plus" players
+// Age category defaults to "Under 40" whenever it's missing/invalid — only "40 Plus" players
 // need to actively pick something different. Keeps every player's age category always filled,
 // which is what makes filtering/exporting by category reliable.
-const DEFAULT_AGE_CATEGORY = 'Under 48';
+const DEFAULT_AGE_CATEGORY = 'Under 40';
 function normalizeAgeCategory(value) {
-  return value === '48 Plus' ? '48 Plus' : DEFAULT_AGE_CATEGORY;
+  return value === '40 Plus' ? '40 Plus' : DEFAULT_AGE_CATEGORY;
 }
 // Short prefix used for the per-category serial shown on ID cards, rosters, and exports
-// (e.g. "U48-007", "48P-003") — separate from the player's DB id / registration number,
+// (e.g. "U40-007", "40P-003") — separate from the player's DB id / registration number,
 // purely so physical cards/lists can be sorted by category at a glance.
 function categoryPrefix(ageCategory) {
-  return ageCategory === '48 Plus' ? '48P' : 'U48';
+  return ageCategory === '40 Plus' ? '40P' : 'U40';
 }
 
 // Core Pick slots that can be assigned directly to a team, bypassing the live auction.
@@ -202,8 +202,11 @@ async function initDb() {
   await pool.query(`ALTER TABLE players ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'Available';`);
   await pool.query(`ALTER TABLE players ADD COLUMN IF NOT EXISTS owner_id INTEGER REFERENCES owners(id) ON DELETE SET NULL;`);
   await pool.query(`ALTER TABLE players ADD COLUMN IF NOT EXISTS sold_price NUMERIC;`);
-  // Age category, chosen at registration: '48 Plus' or 'Under 48'.
+  // Age category, chosen at registration: '40 Plus' or 'Under 40'.
   await pool.query(`ALTER TABLE players ADD COLUMN IF NOT EXISTS age_category TEXT;`);
+  // Age categories were renamed from 48 -> 40; relabel any rows saved under the old names.
+  await pool.query(`UPDATE players SET age_category = '40 Plus' WHERE age_category = '48 Plus';`);
+  await pool.query(`UPDATE players SET age_category = 'Under 40' WHERE age_category = 'Under 48';`);
   // Retained: admin-only flag marking a player as kept from a previous season. Only players
   // marked Retained = Yes show up as choices for a team's Captain / Batsman / Bowler core pick.
   await pool.query(`ALTER TABLE players ADD COLUMN IF NOT EXISTS retained BOOLEAN NOT NULL DEFAULT false;`);
@@ -327,7 +330,7 @@ app.post('/api/register', upload.fields([{ name: 'photo', maxCount: 1 }, { name:
     if (!/^\d{10}$/.test(mobile)) {
       return res.status(400).json({ error: 'Mobile number must be 10 digits.' });
     }
-    // Defaults to "Under 48" if left unselected/invalid — only "48 Plus" needs an explicit choice.
+    // Defaults to "Under 40" if left unselected/invalid — only "40 Plus" needs an explicit choice.
     const finalAgeCategory = normalizeAgeCategory(ageCategory);
     if (!req.files || !req.files.photo || !req.files.proof) {
       return res.status(400).json({ error: 'Photo and payment proof are both required.' });
@@ -380,7 +383,7 @@ app.post('/api/register', upload.fields([{ name: 'photo', maxCount: 1 }, { name:
     const regNo = String(id).padStart(3, '0');
 
     // Category serial: this player's position among everyone registered so far in the same
-    // age category (e.g. "U48-007"). Used on the ID card and physical/print lists so cards
+    // age category (e.g. "U40-007"). Used on the ID card and physical/print lists so cards
     // can be sorted by category by hand.
     const serialCountRow = await pool.query(
       `SELECT COUNT(*)::int AS n FROM players WHERE age_category = $1 AND id <= $2`,
@@ -566,9 +569,9 @@ app.get('/api/players', requireAdmin, async (req, res) => {
     `);
     // Normalize age category and compute each player's category serial (position among
     // everyone in the same category, in registration order) for display in the admin roster.
-    const categoryCounters = { 'Under 48': 0, '48 Plus': 0 };
+    const categoryCounters = { 'Under 40': 0, '40 Plus': 0 };
     const players = result.rows.map(p => {
-      const age_category = p.age_category === '48 Plus' ? '48 Plus' : 'Under 48';
+      const age_category = p.age_category === '40 Plus' ? '40 Plus' : 'Under 40';
       categoryCounters[age_category] += 1;
       return {
         ...p,
@@ -601,7 +604,7 @@ app.post('/api/players/:id/retained', requireAdmin, async (req, res) => {
 });
 
 // Admin: export Excel — Players (with photos), Filterable List, By Owner (full squads),
-// Retained, Under 48, 48 Plus, and a Summary dashboard sheet. 48 Plus players are shown in
+// Retained, Under 40, 40 Plus, and a Summary dashboard sheet. 40 Plus players are shown in
 // bold red wherever their name appears, so they're identifiable at a glance on every sheet.
 app.get('/api/export', requireAdmin, async (req, res) => {
   try {
@@ -616,9 +619,9 @@ app.get('/api/export', requireAdmin, async (req, res) => {
     // Normalize age category (defensive, in case of old rows) and compute each player's
     // category serial — their position among everyone in the same category, in registration
     // order (safe because the query is ORDER BY p.id ASC).
-    const categoryCounters = { 'Under 48': 0, '48 Plus': 0 };
+    const categoryCounters = { 'Under 40': 0, '40 Plus': 0 };
     players.forEach(p => {
-      p.age_category = p.age_category === '48 Plus' ? '48 Plus' : 'Under 48';
+      p.age_category = p.age_category === '40 Plus' ? '40 Plus' : 'Under 40';
       categoryCounters[p.age_category] += 1;
       p.category_serial = `${categoryPrefix(p.age_category)}-${String(categoryCounters[p.age_category]).padStart(3, '0')}`;
       p.team_display = p.owner_team_name || p.owner_name || '';
@@ -680,7 +683,7 @@ app.get('/api/export', requireAdmin, async (req, res) => {
         sold_price: p.sold_price || ''
       });
       row.height = 70;
-      if (p.age_category === '48 Plus') {
+      if (p.age_category === '40 Plus') {
         row.getCell('name').font = AGE_HIGHLIGHT_FONT;
         row.getCell('age_category').font = AGE_HIGHLIGHT_FONT;
       }
@@ -738,7 +741,7 @@ app.get('/api/export', requireAdmin, async (req, res) => {
         owner_name: p.team_display,
         sold_price: p.sold_price || ''
       });
-      if (p.age_category === '48 Plus') {
+      if (p.age_category === '40 Plus') {
         row.getCell('name').font = AGE_HIGHLIGHT_FONT;
         row.getCell('age_category').font = AGE_HIGHLIGHT_FONT;
       }
@@ -749,7 +752,7 @@ app.get('/api/export', requireAdmin, async (req, res) => {
       to: { row: players.length + 1, column: filterSheet.columns.length }
     };
 
-    // ---------- Helper for the segregated plain-roster sheets (Retained / Under 48 / 48 Plus) ----------
+    // ---------- Helper for the segregated plain-roster sheets (Retained / Under 40 / 40 Plus) ----------
     function addPlainRosterSheet(name, rows) {
       const s = workbook.addWorksheet(name);
       s.columns = [
@@ -781,7 +784,7 @@ app.get('/api/export', requireAdmin, async (req, res) => {
           owner_name: p.team_display,
           sold_price: p.sold_price || ''
         });
-        if (p.age_category === '48 Plus') {
+        if (p.age_category === '40 Plus') {
           row.getCell('name').font = AGE_HIGHLIGHT_FONT;
           row.getCell('age_category').font = AGE_HIGHLIGHT_FONT;
         }
@@ -792,10 +795,10 @@ app.get('/api/export', requireAdmin, async (req, res) => {
       return s;
     }
 
-    // ---------- Sheets 3–5: Retained / Under 48 / 48 Plus, fully segregated ----------
+    // ---------- Sheets 3–5: Retained / Under 40 / 40 Plus, fully segregated ----------
     addPlainRosterSheet('Retained', players.filter(p => p.retained));
-    addPlainRosterSheet('Under 48', players.filter(p => p.age_category === 'Under 48'));
-    addPlainRosterSheet('48 Plus', players.filter(p => p.age_category === '48 Plus'));
+    addPlainRosterSheet('Under 40', players.filter(p => p.age_category === 'Under 40'));
+    addPlainRosterSheet('40 Plus', players.filter(p => p.age_category === '40 Plus'));
 
     // ---------- Sheet 6: By Owner — each team's full squad, grouped under a header row ----------
     const byOwnerSheet = workbook.addWorksheet('By Owner');
@@ -833,7 +836,7 @@ app.get('/api/export', requireAdmin, async (req, res) => {
             pick_tag: p.pick_tag || '',
             sold_price: p.sold_price || ''
           });
-          if (p.age_category === '48 Plus') {
+          if (p.age_category === '40 Plus') {
             row.getCell('name').font = AGE_HIGHLIGHT_FONT;
             row.getCell('age_category').font = AGE_HIGHLIGHT_FONT;
           }
@@ -854,7 +857,7 @@ app.get('/api/export', requireAdmin, async (req, res) => {
           pick_tag: p.status,
           sold_price: ''
         });
-        if (p.age_category === '48 Plus') {
+        if (p.age_category === '40 Plus') {
           row.getCell('name').font = AGE_HIGHLIGHT_FONT;
           row.getCell('age_category').font = AGE_HIGHLIGHT_FONT;
         }
@@ -867,8 +870,8 @@ app.get('/api/export', requireAdmin, async (req, res) => {
 
     summarySheet.addRow(['OVERALL']).font = { bold: true, size: 13 };
     summarySheet.addRow(['Total Registered Players', players.length]);
-    summarySheet.addRow(['Under 48', players.filter(p => p.age_category === 'Under 48').length]);
-    summarySheet.addRow(['48 Plus', players.filter(p => p.age_category === '48 Plus').length]);
+    summarySheet.addRow(['Under 40', players.filter(p => p.age_category === 'Under 40').length]);
+    summarySheet.addRow(['40 Plus', players.filter(p => p.age_category === '40 Plus').length]);
     summarySheet.addRow(['Retained', players.filter(p => p.retained).length]);
     summarySheet.addRow(['Sold', players.filter(p => p.status === 'Sold').length]);
     summarySheet.addRow(['Available', players.filter(p => p.status === 'Available').length]);
@@ -908,9 +911,9 @@ app.get('/api/export-pdf', requireAdmin, async (req, res) => {
       ORDER BY p.id ASC
     `);
     const players = result.rows;
-    const categoryCounters = { 'Under 48': 0, '48 Plus': 0 };
+    const categoryCounters = { 'Under 40': 0, '40 Plus': 0 };
     players.forEach(p => {
-      p.age_category = p.age_category === '48 Plus' ? '48 Plus' : 'Under 48';
+      p.age_category = p.age_category === '40 Plus' ? '40 Plus' : 'Under 40';
       categoryCounters[p.age_category] += 1;
       p.category_serial = `${categoryPrefix(p.age_category)}-${String(categoryCounters[p.age_category]).padStart(3, '0')}`;
     });
@@ -954,11 +957,11 @@ app.get('/api/export-pdf', requireAdmin, async (req, res) => {
       }
       const textX = doc.page.margins.left + 66;
       const textWidth = doc.page.width - doc.page.margins.right - textX;
-      // 48 Plus players are printed in bold red so they're instantly identifiable on the sheet.
-      const isPlus48 = p.age_category === '48 Plus';
-      doc.fillColor(isPlus48 ? '#CC0000' : '#000000')
+      // 40 Plus players are printed in bold red so they're instantly identifiable on the sheet.
+      const isPlus40 = p.age_category === '40 Plus';
+      doc.fillColor(isPlus40 ? '#CC0000' : '#000000')
         .font('Helvetica-Bold').fontSize(12)
-        .text(`${p.category_serial}  ${p.name}${isPlus48 ? '  (48+)' : ''}`, textX, top, { width: textWidth });
+        .text(`${p.category_serial}  ${p.name}${isPlus40 ? '  (40+)' : ''}`, textX, top, { width: textWidth });
       doc.fillColor('#000000').font('Helvetica').fontSize(10)
         .text(`${p.role}  •  ${p.location}  •  ${p.mobile}`, textX, top + 17, { width: textWidth })
         .text(`Registered: ${new Date(p.created_at).toLocaleString()}`, textX, top + 32, { width: textWidth })
@@ -989,8 +992,8 @@ app.put('/api/players/:id', requireSuperAdmin, upload.single('photo'), async (re
     if (!/^\d{10}$/.test(mobile)) {
       return res.status(400).json({ error: 'Mobile number must be 10 digits.' });
     }
-    if (ageCategory && !['48 Plus', 'Under 48'].includes(ageCategory)) {
-      return res.status(400).json({ error: 'Age category must be "48 Plus" or "Under 48".' });
+    if (ageCategory && !['40 Plus', 'Under 40'].includes(ageCategory)) {
+      return res.status(400).json({ error: 'Age category must be "40 Plus" or "Under 40".' });
     }
     const mobileCheck = await pool.query(
       'SELECT name FROM players WHERE mobile = $1 AND id != $2 LIMIT 1',
@@ -1196,7 +1199,7 @@ async function loadUnsoldPlayers() {
     `SELECT id, name, role, photo_url, age_category, status FROM players
      WHERE status != 'Sold' ORDER BY name ASC`
   );
-  return r.rows.map(p => ({ ...p, age_category: p.age_category === '48 Plus' ? '48 Plus' : 'Under 48' }));
+  return r.rows.map(p => ({ ...p, age_category: p.age_category === '40 Plus' ? '40 Plus' : 'Under 40' }));
 }
 app.get('/api/unsold', async (req, res) => {
   try { res.json(await loadUnsoldPlayers()); }
@@ -1224,9 +1227,9 @@ app.get('/api/unsold/pdf', async (req, res) => {
       doc.fillColor('#888').font('Helvetica').fontSize(10).text(String(i + 1), L, top + 16, { width: 24 });
       if (photos[i]) { try { doc.image(photos[i], L + 28, top, { width: 40, height: 40 }); } catch {} }
       const tx = L + 78, tw = R - tx - 110;
-      const is48 = p.age_category === '48 Plus';
-      doc.fillColor(is48 ? '#CC0000' : '#000').font('Helvetica-Bold').fontSize(12)
-        .text(`${p.name}${is48 ? '  (48+)' : ''}`, tx, top + 4, { width: tw });
+      const is40 = p.age_category === '40 Plus';
+      doc.fillColor(is40 ? '#CC0000' : '#000').font('Helvetica-Bold').fontSize(12)
+        .text(`${p.name}${is40 ? '  (40+)' : ''}`, tx, top + 4, { width: tw });
       doc.fillColor('#555').font('Helvetica').fontSize(10).text(p.role || '', tx, top + 22, { width: tw });
       doc.fillColor(p.status === 'Unsold' ? '#B45309' : '#0B5D3B').font('Helvetica-Bold').fontSize(10)
         .text(p.status === 'Unsold' ? 'Passed in auction' : 'Available', R - 104, top + 14, { width: 104, align: 'right' });
@@ -1245,7 +1248,7 @@ app.get('/api/unsold/pdf', async (req, res) => {
 // (Owner / Captain / Batsman pick / Bowler pick), AND the full squad of everyone bought via
 // the live auction. No admin password needed; anyone can view this — this is the list an
 // owner gets once the auction is done. Each player includes age_category so the frontend
-// can mark 48 Plus players in red/bold.
+// can mark 40 Plus players in red/bold.
 app.get('/api/teams', async (req, res) => {
   try {
     const ownersResult = await pool.query(
